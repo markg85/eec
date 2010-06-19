@@ -1,6 +1,9 @@
 <IfModule mod_rewrite.c>
+	
 	RewriteEngine On
-	RewriteRule ^([^.]+)/([^.]+)/([^.]+)/?$ index.php?mModule=$1&mSubPath=$2&mItem=$3 [L]
-	RewriteRule ^([^.]+)/([^.]+)/?$ index.php?mModule=$1&mSubPath=$2 [L]
-	RewriteRule ^([^.]+)?$ index.php?mModule=$1 [L]
+	
+	RewriteRule ^/?([^/]+)/?$ index.php?mModule=$1 [L,QSA]
+	RewriteRule ^/?([^/]+)/?([^.].*)/$ index.php?mModule=$1&mSubPath=$2 [L,QSA]
+	RewriteRule ^/?([^/]+)/?([^.].*)/([^/]+)?$ index.php?mModule=$1&mSubPath=$2&mItem=$3 [L,QSA]
+	
 </IfModule>
