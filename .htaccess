@@ -2,8 +2,20 @@
 	
 	RewriteEngine On
 	
+	RewriteCond %{REQUEST_FILENAME} !-f 
+	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule ^/?([^/]+)/?$ index.php?mModule=$1 [L,QSA]
+	
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule ^/?([^/]+)/?([^.].*)/$ index.php?mModule=$1&mSubPath=$2 [L,QSA]
+	
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^/?([^/]+)/?([^/]+)$ index.php?mModule=$1&mItem=$2 [L,QSA]
+	
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule ^/?([^/]+)/?([^.].*)/([^/]+)?$ index.php?mModule=$1&mSubPath=$2&mItem=$3 [L,QSA]
 	
 </IfModule>
