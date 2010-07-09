@@ -12,6 +12,9 @@
 	{
 		// The singlethon var
 		private static $_oCore;
+        
+        
+        private $_aUrl;
 		
 		// The object storage -- not using SplObjectStorage since it doesn't seem to be right for what i want.
 		private $_aDataContainer = array();
@@ -21,7 +24,7 @@
 		*/
 		public function __construct()
 		{
-			$this->set('rest', 			new REST());
+			$this->set('rest', 			REST::getInstance());
 			$this->set('validator', 	new Validator());
 		}
 		
@@ -50,7 +53,8 @@
 		}
 		
 		/**
-		* Set function that adds components to the EEC Core. This is likely used by plugins.
+		* Set function that adds a given class to the EEC Core.
+        * This must be used by plugins to register their class.
 		*/
 		public function set($sCoreComponentName = null, $sCoreComponent = null)
 		{
@@ -72,6 +76,41 @@
 			}
 			return false;
 		}
+
+        /**
+        * setUrl function will be used to compose SEO friendly url's or argument based url's
+        */
+        public function setUrl($sModule = null, $sSubpath = '', $sItem = '')
+        {
+            if(is_null($sModule))
+            {
+                //die('You must provide a module to the setUrl EEC Core function.');
+                $this->get('rest')->runFilters();
+            }
+            else
+            {
+                $this->get('rest')->runFilters($sModule, $sSubpath, $sItem);
+            }
+            
+            $this->_aUrl = array();
+            $this->_aUrl['seo'] = preg_replace(array('/(\/){1,}/'), array('/'), implode('/', array($this->get('rest')->getModule(), $this->get('rest')->getSubPath(), $this->get('rest')->getItem())));
+            $this->_aUrl['arg'] = "mModule=" . $this->get('rest')->getModule() . '&mSubPath=' . $this->get('rest')->getSubPath() . '&mItem=' . $this->get('rest')->getItem();;
+        }
+        
+        /**
+        * getUrl function returns the generated data from setUrl
+        */        
+        public function getUrl()
+        {
+            if(isset($this->_aUrl['seo']) && isset($this->_aUrl['arg']))
+            {
+                return $this->_aUrl;
+            }
+            else
+            {
+                die('There is no URL data in the _aUrl array.');
+            }
+        }
 	}
 	
 ?>

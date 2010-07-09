@@ -7,9 +7,8 @@
 	
 	
 	$test = Core::getInstance();
-	echo '<pre>';
-	print_r($test);
-	print_r($_GET);
-	echo '</pre>';
-	
+	var_dump($test);
+	var_dump($_GET);
+	$test->setUrl("so/m/e/M/o/dule", "", "1/1/1/1/");
+	var_dump($test->getUrl());
 ?>
