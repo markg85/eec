@@ -32,7 +32,6 @@
                 $sModule    = (!isset($_GET['mModule']))    ? '' : $_GET['mModule'];
                 $sSubpath   = (!isset($_GET['mSubPath']))   ? '' : $_GET['mSubPath'];
                 $sItem      = (!isset($_GET['mItem']))      ? '' : $_GET['mItem'];
-                    
             }
             
             // First strip out double forward slaches so we have just one. Then filter out any characters that we don't allow in url's
@@ -44,25 +43,23 @@
             // Just for the sake of REST we check those 3 as well. Those can then be used in other modules/plugins.
             switch($_SERVER['REQUEST_METHOD'])
             {
+                case 'GET':
+                    $this->_bGetAction      = true;
+                    if($this->_sGetItem == '')
+                    {
+                        $this->_bIndexAction = true;
+                        $this->_bGetAction = false;
+                    }
+                    break;
                 case 'POST':
-                    $this->_bPostAction = true;
+                    $this->_bPostAction     = true;
                     break;
                 case 'PUT':
-                    $this->_bPutAction = true;
+                    $this->_bPutAction      = true;
                     break;
                 case 'DELETE':
-                    $this->_bDeleteAction = true;
+                    $this->_bDeleteAction   = true;
                     break;
-            }
-            
-            if($this->_sGetItem != '')
-            {
-                $this->_bGetAction = true;
-            }
-            
-            if($this->_sGetItem == '')
-            {
-                $this->_bIndexAction = true;
             }
         }
 		
