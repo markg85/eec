@@ -91,10 +91,6 @@
             {
                 $this->get('rest')->runFilters($sModule, $sSubpath, $sItem);
             }
-            
-            $this->_aUrl = array();
-            $this->_aUrl['seo'] = preg_replace(array('/(\/){1,}/'), array('/'), implode('/', array($this->get('rest')->getModule(), $this->get('rest')->getSubPath(), $this->get('rest')->getItem())));
-            $this->_aUrl['arg'] = "mModule=" . $this->get('rest')->getModule() . '&mSubPath=' . $this->get('rest')->getSubPath() . '&mItem=' . $this->get('rest')->getItem();;
         }
         
         /**
@@ -102,14 +98,10 @@
         */        
         public function getUrl()
         {
-            if(isset($this->_aUrl['seo']) && isset($this->_aUrl['arg']))
-            {
-                return $this->_aUrl;
-            }
-            else
-            {
-                die('There is no URL data in the _aUrl array.');
-            }
+            $this->_aUrl = array();
+            $this->_aUrl['seo'] = preg_replace(array('/(\/){1,}/'), array('/'), implode('/', array($this->get('rest')->getModule(), $this->get('rest')->getSubPath(), $this->get('rest')->getItem())));
+            $this->_aUrl['arg'] = "mModule=" . $this->get('rest')->getModule() . '&mSubPath=' . $this->get('rest')->getSubPath() . '&mItem=' . $this->get('rest')->getItem();;
+            return $this->_aUrl;
         }
 	}
 	
