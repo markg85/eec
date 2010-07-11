@@ -58,9 +58,29 @@
 		* Set function that adds a given class to the EEC Core.
         * This must be used by plugins to register their class.
 		*/
-		public function set($sCoreComponentName = null, $sCoreComponent = null)
+		public function set($sCoreComponentName = null, $sCoreComponent = null, $aDetails = null)
 		{
-			if(!isset($this->_aDataContainer[$sCoreComponentName]))
+			if(is_array($aDetails))
+            {
+                if(isset($aDetails['requiredExtensions']) && is_array($aDetails['requiredExtensions']))
+                {
+                    foreach($aDetails['requiredExtensions'] as $sReqExtension)
+                    {
+                        if($this->get($sReqExtension) === false)
+                        {
+                            die("ERROR : The extension: " . $sCoreComponentName . " requires the extension: " . $sReqExtension . ", but that extension isn't loaded!");
+                        }
+                        
+                        // The extension seems to be required thus run it's init function if available
+                        if(method_exists(array($this->get($sReqExtension), 'init')) === false)
+                        {
+                            call_user_func(array($this->get($sReqExtension), 'init'));
+                        }
+                    }
+                }
+            }
+
+            if(!isset($this->_aDataContainer[$sCoreComponentName]))
 			{
 				$this->_aDataContainer[$sCoreComponentName] = $sCoreComponent;
 			}
