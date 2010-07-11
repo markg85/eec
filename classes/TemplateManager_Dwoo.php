@@ -7,7 +7,7 @@
         private $_sUseContainerName;
         private $_Dwoo;
         
-        public function initTemplate()
+        public function init()
         {
             include EEC_BASE_PATH . 'dwoo/dwooAutoload.php';
             $this->_Dwoo = new Dwoo();
