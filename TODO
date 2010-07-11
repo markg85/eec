@@ -1,0 +1,6 @@
+1. Deeply integrate Dwoo in the Core. Each module should have it's own Dwoo_Data object (and can be disabled when registering the module)
+2. Each module CAN have a own template page but is not required
+3. Configuration things should be handled in the core, like setting where Dwoo should look for templated. In time this can be used for more things as well.
+4. Modules should somehow be able to pipe other modules. Example: /news/1 is just the first news message but /rest/news/1 should also be the first 
+   news message only in a API like way where the news is outputted as XML-RPC, json or a self made XML format. So here the rest module should load
+   the news module and the news module should be aware that rest loaded it to follow a different code path to make api output possible.

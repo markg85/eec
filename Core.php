@@ -7,13 +7,14 @@
 	
 	require_once EEC_BASE_PATH . 'classes/REST.php';		// Class that allows for rest like url's with additions.
 	require_once EEC_BASE_PATH . 'classes/Validator.php';	// Class that allows for validation. -- "replace" with a class that uses the filter extension?
-	
+	require_once EEC_BASE_PATH . 'classes/TemplateManager_Dwoo.php'; // Include dwoo as the template manager.
+    
 	class Core
 	{
 		// The singlethon var
 		private static $_oCore;
         
-        
+        // URL array filled by getUrl
         private $_aUrl;
 		
 		// The object storage -- not using SplObjectStorage since it doesn't seem to be right for what i want.
@@ -24,8 +25,9 @@
 		*/
 		public function __construct()
 		{
-			$this->set('rest', 			REST::getInstance());
-			$this->set('validator', 	new Validator());
+			$this->set('rest', 			        REST::getInstance());
+            $this->set('validator',             new Validator());
+            $this->set('template_manager',      new TemplateManager_Dwoo());
 		}
 		
 		/**
@@ -76,7 +78,7 @@
 			}
 			return false;
 		}
-
+        
         /**
         * setUrl function will be used to compose SEO friendly url's or argument based url's
         */
@@ -95,13 +97,35 @@
         
         /**
         * getUrl function returns the generated data from setUrl
-        */        
+        */
         public function getUrl()
         {
             $this->_aUrl = array();
             $this->_aUrl['seo'] = preg_replace(array('/(\/){1,}/'), array('/'), implode('/', array($this->get('rest')->getModule(), $this->get('rest')->getSubPath(), $this->get('rest')->getItem())));
             $this->_aUrl['arg'] = "mModule=" . $this->get('rest')->getModule() . '&mSubPath=' . $this->get('rest')->getSubPath() . '&mItem=' . $this->get('rest')->getItem();;
             return $this->_aUrl;
+        }
+        
+        /**
+        * validateValue function validates the input and if true returns the input otherwise returns null
+        * Also a special fallback param is usable here which can be used for example in forms where wrong data is submitted thus the
+        * old data should be used which is what is returned here when the validator check fails and the fallbackValue is
+        * filled in.
+        */
+        public function validateValue($mValue, $sValidator, $mFallbackValue = null)
+        {
+            if(method_exists($this->get('validator'), $sValidator) || $this->get('validator')->customFilterExists($mValue, $sValidator))
+            {
+                if(call_user_func(array($this->get('validator'), $sValidator), $mValue) == true || $this->get('validator')->callCustomFilter($mValue, $sValidator) == true)
+                {
+                    return $mValue;
+                }
+            }
+            if(!is_null($mFallbackValue))
+            {
+                return $mFallbackValue;
+            }
+            return null;
         }
 	}
 	
