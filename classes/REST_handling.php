@@ -1,6 +1,6 @@
 <?php
 	
-	class REST
+	class REST_handling
 	{
 		// The singlethon var
 		private static $_oRest;
@@ -34,7 +34,7 @@
                 $sItem      = (!isset($_GET['mItem']))      ? '' : $_GET['mItem'];
             }
             
-            // First strip out double forward slaches so we have just one. Then filter out any characters that we don't allow in url's
+            // Strip out double forward slaches so we have just one and filter out any characters that we don't allow in url's
             // Try to use SQL injection now in the URL ^_^
             $this->_sModule  = preg_replace('/[^a-zA-Z0-9_-]/', '', $sModule);
             $this->_sGetItem = preg_replace('/[^a-zA-Z0-9_.-]/', '', $sItem);
@@ -70,7 +70,7 @@
 		{
 			if(!isset(self::$_oRest))
 			{
-				self::$_oRest = new REST();
+				self::$_oRest = new REST_handling();
 			}
 			return self::$_oRest;
 		}

@@ -1,11 +1,16 @@
 <?php
 	
-	if(!defined('EEC_BASE_PATH'))
-	{
-		die('The define: EEC_BASE_PATH could not be found. It must point to the path where the EEC Core.php file is located');
-	}
+    if(!defined('EEC_BASE_PATH'))
+    {
+        die('The define: EEC_BASE_PATH could not be found. It must point to the path where the EEC Core.php file is located');
+    }
+    
+    if(!defined('EEC_MODULE_PATH'))
+    {
+        die('The define: EEC_MODULE_PATH could not be found. It must point to the folder where your modules are located');
+    }
 	
-	require_once EEC_BASE_PATH . 'classes/REST.php';		// Class that allows for rest like url's with additions.
+	require_once EEC_BASE_PATH . 'classes/REST_handling.php';		// Class that allows for rest like url's with additions.
 	require_once EEC_BASE_PATH . 'classes/Validator.php';	// Class that allows for validation. -- "replace" with a class that uses the filter extension?
 	require_once EEC_BASE_PATH . 'classes/TemplateManager_Dwoo.php'; // Include dwoo as the template manager.
     
@@ -20,12 +25,14 @@
 		// The object storage -- not using SplObjectStorage since it doesn't seem to be right for what i want.
 		private $_aDataContainer = array();
 		
+		private $_sLoadedByModule = null;
+        
 		/**
 		* Constructor that adds some default EEC components.
 		*/
 		public function __construct()
 		{
-			$this->set('rest', 			        REST::getInstance());
+			$this->set('rest_handling',	        REST_handling::getInstance());
             $this->set('validator',             new Validator());
             $this->set('template_manager',      new TemplateManager_Dwoo());
 		}
@@ -42,6 +49,11 @@
 			return self::$_oCore;
 		}
 		
+		public function handleUrl()
+		{
+            loadModule($this->get("rest_handling")->getModule());   
+        }
+		
 		/**
 		* Get function that returns a Core component object
 		*/
@@ -51,6 +63,10 @@
 			{
 				return $this->_aDataContainer[$sCoreComponentName];
 			}
+			else
+            {
+                die("The provided component: " . $sCoreComponentName . " isn't registered!");
+            }
 			return false;
 		}
 		
@@ -107,11 +123,11 @@
             if(is_null($sModule))
             {
                 //die('You must provide a module to the setUrl EEC Core function.');
-                $this->get('rest')->runFilters();
+                $this->get('rest_handling')->runFilters();
             }
             else
             {
-                $this->get('rest')->runFilters($sModule, $sSubpath, $sItem);
+                $this->get('rest_handling')->runFilters($sModule, $sSubpath, $sItem);
             }
         }
         
@@ -121,8 +137,8 @@
         public function getUrl()
         {
             $this->_aUrl = array();
-            $this->_aUrl['seo'] = preg_replace(array('/(\/){1,}/'), array('/'), implode('/', array($this->get('rest')->getModule(), $this->get('rest')->getSubPath(), $this->get('rest')->getItem())));
-            $this->_aUrl['arg'] = "mModule=" . $this->get('rest')->getModule() . '&mSubPath=' . $this->get('rest')->getSubPath() . '&mItem=' . $this->get('rest')->getItem();;
+            $this->_aUrl['seo'] = preg_replace(array('/(\/){1,}/'), array('/'), implode('/', array($this->get('rest_handling')->getModule(), $this->get('rest_handling')->getSubPath(), $this->get('rest_handling')->getItem())));
+            $this->_aUrl['arg'] = "mModule=" . $this->get('rest_handling')->getModule() . '&mSubPath=' . $this->get('rest_handling')->getSubPath() . '&mItem=' . $this->get('rest_handling')->getItem();;
             return $this->_aUrl;
         }
         
@@ -147,6 +163,72 @@
             }
             return null;
         }
+        
+        /**
+        * getLoadedByModule function. This function returns the module that loaded the current module.
+        */
+        public function getLoadedByModule()
+        {
+            return $this->_sLoadedByModule;
+        }
+        
+        /**
+         * setLoadedByModule function. This function gets set when some module loads some other module.
+         * For example for API purposes. Then you can have the "news" module and the "rest" module. rest
+         * meaning that the output will be usable for api's like json or xml-rpc. Now when news is called
+         * through the rest module (like so: http://url/rest/neuws/1) then news can follow a different
+         * code path for rest specific tasks.
+         */
+        public function setLoadedByModule($sModule)
+        {
+            $this->_sLoadedByModule = $sModule;
+        }
+        
+        /**
+         * shiftAndLoadModule function. This function moves the the first subPath part (till the first "/")
+         * to the module part thus allowing one module to load another one.
+         */
+        public function shiftAndLoadModule()
+        {
+            // First set this since it's gonna be overwritten by the functions below
+            $this->setLoadedByModule($this->get('rest_handling')->getModule());
+            $sNewModule = $this->get('rest_handling')->getSubPath();
+            
+            // If there is only one "module" in the subPath we detect and use that here.
+            if(strpos('/', $sNewModule) === false && strlen($sNewModule) > 2)
+            {
+                $sNewModule = $this->get('rest_handling')->getSubPath();
+                $this->setUrl($sNewModule, '', $this->get('rest_handling')->getItem());
+            }
+            else
+            {
+                $sNewModule = stristr('/', $this->get('rest_handling')->getSubPath(), true);
+                $this->setUrl($sNewModule, stristr('/', $this->get('rest_handling')->getSubPath()), $this->get('rest_handling')->getItem());
+            }
+            
+            loadModule($sNewModule);
+        }
 	}
+	
+	/**
+     * loadModule function. This function loads a given module.
+     * Seperated from core to prevent modules to be loaded inside the Core class thus having all the Core class details.
+     */
+	function loadModule($sModule = null)
+	{
+        if(!is_null($sModule) || strlen($sModule) < 3)
+        {
+            $sModulePath = EEC_MODULE_PATH . $sModule . '/' . $sModule . '.php';
+            if(!file_exists($sModulePath))
+            {
+                die('The module: ' . $sModule . ' could not be loaded.');
+            }
+            require_once $sModulePath;
+        }
+        else 
+        {
+            die('No module provided for the loadModule function.');
+        }
+    }
 	
 ?>
