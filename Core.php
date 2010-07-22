@@ -190,9 +190,16 @@
          */
         public function shiftAndLoadModule()
         {
+            $sNewModule = $this->get('rest_handling')->getSubPath();
+            
+            // If the subPath is empty we can't continue with this function so return.
+            if($sNewModule == '')
+            {
+                return;
+            }
+            
             // First set this since it's gonna be overwritten by the functions below
             $this->setLoadedByModule($this->get('rest_handling')->getModule());
-            $sNewModule = $this->get('rest_handling')->getSubPath();
             
             // If there is only one "module" in the subPath we detect and use that here.
             if(strpos('/', $sNewModule) === false && strlen($sNewModule) > 2)
