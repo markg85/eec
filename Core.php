@@ -202,14 +202,13 @@
             $this->setLoadedByModule($this->get('rest_handling')->getModule());
             
             // If there is only one "module" in the subPath we detect and use that here.
-            if(strpos('/', $sNewModule) === false && strlen($sNewModule) > 2)
+            if(strpos($sNewModule, '/') === false && strlen($sNewModule) > 2)
             {
-                $sNewModule = $this->get('rest_handling')->getSubPath();
                 $this->setUrl($sNewModule, '', $this->get('rest_handling')->getItem());
             }
             else
             {
-                $sNewModule = stristr('/', $this->get('rest_handling')->getSubPath(), true);
+                $sNewModule = stristr($this->get('rest_handling')->getSubPath(), '/', true);
                 $this->setUrl($sNewModule, stristr('/', $this->get('rest_handling')->getSubPath()), $this->get('rest_handling')->getItem());
             }
             
