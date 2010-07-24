@@ -13,6 +13,8 @@
 	require_once EEC_BASE_PATH . 'classes/REST_handling.php';		// Class that allows for rest like url's with additions.
 	require_once EEC_BASE_PATH . 'classes/Validator.php';	// Class that allows for validation. -- "replace" with a class that uses the filter extension?
 	require_once EEC_BASE_PATH . 'classes/TemplateManager_Dwoo.php'; // Include dwoo as the template manager.
+	require_once EEC_BASE_PATH . 'classes/cache.php'; // Caching class that can use: APC, file and memcache(d)
+	require_once EEC_BASE_PATH . 'classes/config.php'; // Config class to store configuration values
     
 	class Core
 	{
@@ -35,6 +37,8 @@
 			$this->set('rest_handling',	        REST_handling::getInstance());
             $this->set('validator',             new Validator());
             $this->set('template_manager',      new TemplateManager_Dwoo());
+            $this->set('config',                new EEC_Config());
+            $this->set('cache',                 new EEC_Cache());
 		}
 		
 		/**
