@@ -53,9 +53,27 @@
 			return self::$_oCore;
 		}
 		
-		public function handleUrl()
+		public function handleUrl($defaultModule = 'index')
 		{
-            loadModule($this->get("rest_handling")->getModule());   
+            
+            $sModulePath = EEC_MODULE_PATH . $this->get("rest_handling")->getModule() . '/' . $this->get("rest_handling")->getModule() . '.php';
+            $sDefaultPath = EEC_MODULE_PATH . $defaultModule . '/' . $defaultModule . '.php';
+            
+            // Load the current module
+            if(file_exists($sModulePath))
+            {
+                loadModule($sModulePath);
+            }
+            // Try to load the default module if the current module failed
+            elseif(file_exists($sModulePath))
+            {
+                loadModule($sDefaultPath);
+            }
+            // And if this also fauls we can print a message with some explenation.
+            else 
+            {
+                //die('The default module nor the current module could be loaded!');
+            }
         }
 		
 		/**
@@ -216,29 +234,24 @@
                 $this->setUrl($sNewModule, stristr('/', $this->get('rest_handling')->getSubPath()), $this->get('rest_handling')->getItem());
             }
             
-            loadModule($sNewModule);
+            $sNewModulePath = EEC_MODULE_PATH . $sNewModule . '/' . $sNewModule . '.php';
+            
+            // Try to load the shifted module if the shifted module exists otherwise do nothing
+            if(file_exists($sNewModulePath))
+            {
+                loadModule($sNewModulePath);
+            }
         }
 	}
 	
 	/**
      * loadModule function. This function loads a given module.
      * Seperated from core to prevent modules to be loaded inside the Core class thus having all the Core class details.
+     * Right now just a wrapper for require_once ... perhaps not the best way to do this.
      */
 	function loadModule($sModule = null)
 	{
-        if(!is_null($sModule) || strlen($sModule) < 3)
-        {
-            $sModulePath = EEC_MODULE_PATH . $sModule . '/' . $sModule . '.php';
-            if(!file_exists($sModulePath))
-            {
-                die('The module: ' . $sModule . ' could not be loaded.');
-            }
-            require_once $sModulePath;
-        }
-        else 
-        {
-            die('No module provided for the loadModule function.');
-        }
+        require_once $sModule;
     }
 	
 ?>
