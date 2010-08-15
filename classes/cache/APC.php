@@ -4,7 +4,7 @@
     {
         public function get($sKey)
         {
-            apc_fetch($sKey);
+            return apc_fetch($sKey);
         }
         
         public function add($sKey, $mValue, $iTTL)

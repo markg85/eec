@@ -14,7 +14,7 @@
 	//$test->setUrl();
 	//var_dump($test->handleUrl());
 	
-	var_dump($test->validateValue("Just some string...", "isString"));
+	//var_dump($test->validateValue("Just some string...", "isString"));
 
 	$test->get("template_manager")->init();
 	$test->get("template_manager")->addDataContainer("test");

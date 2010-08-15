@@ -42,7 +42,7 @@
 		}
 		
 		/**
-		* Singlethon function to get the same router object
+		* Singlethon function to get the same core object
 		*/
 		public static function getInstance()
 		{
