@@ -10,11 +10,13 @@
         die('The define: EEC_MODULE_PATH could not be found. It must point to the folder where your modules are located');
     }
 	
-	require_once EEC_BASE_PATH . 'classes/REST_handling.php';		// Class that allows for rest like url's with additions.
+	require_once EEC_BASE_PATH . 'classes/Database.php'; // Database class
+	require_once EEC_BASE_PATH . 'classes/REST_handling.php';       // Class that allows for rest like url's with additions.
 	require_once EEC_BASE_PATH . 'classes/Validator.php';	// Class that allows for validation. -- "replace" with a class that uses the filter extension?
 	require_once EEC_BASE_PATH . 'classes/TemplateManager_Dwoo.php'; // Include dwoo as the template manager.
 	require_once EEC_BASE_PATH . 'classes/cache.php'; // Caching class that can use: APC, file and memcache(d)
 	require_once EEC_BASE_PATH . 'classes/config.php'; // Config class to store configuration values
+	require_once EEC_BASE_PATH . 'classes/ACL.php'; // Config class to store configuration values
     
 	class Core
 	{
@@ -34,11 +36,16 @@
 		*/
 		public function __construct()
 		{
-			$this->set('rest_handling',	        REST_handling::getInstance());
+			$this->set('database',              EEC_Database::getInstance());
+			$this->set('rest_handling',         REST_handling::getInstance());
             $this->set('validator',             new Validator());
             $this->set('template_manager',      new TemplateManager_Dwoo());
             $this->set('config',                new EEC_Config());
             $this->set('cache',                 new EEC_Cache());
+            $this->set('acl',                   new EEC_ACL());
+            
+            //$this->get("database")->createTable("acl3", array());
+            //$this->get("database")->dropTable("acl3");
 		}
 		
 		/**
@@ -55,21 +62,37 @@
 		
 		public function handleUrl($defaultModule = 'index')
 		{
-            
             $sModulePath = EEC_MODULE_PATH . $this->get("rest_handling")->getModule() . '/' . $this->get("rest_handling")->getModule() . '.php';
+            $sModuleConfigPath = EEC_MODULE_PATH . $this->get("rest_handling")->getModule() . '/config.php';
+            $sModuleConfigClassName = $this->get("rest_handling")->getModule() . '_config';
             $sDefaultPath = EEC_MODULE_PATH . $defaultModule . '/' . $defaultModule . '.php';
             
+            /**
+             * TEMP NOTE : right now loading the module configuration directly from the file, but that should be put in a database
+             * or APC or anything.. this is wrong! EEC_Config should probably be used here in which all module states are registered. 
+             * If not existing in the EEC_Config then it should load it from this file -- as a last resort!
+             * 
+             * NOTE 2 : Cannot continue this untill i have users and something to check module permissions agains. And for that i need
+             * ACL's as well... bummer!
+             * 
+             * NOTE 3
+             * ACL Created! (though in rough shape). The above can now be created.
+             */
+            
             // Load the current module
-            if(file_exists($sModulePath))
+            if(file_exists($sModuleConfigPath) && file_exists($sModulePath) && loadModule($sModuleConfigPath))
             {
+                // Load the configuration to see if we are allowed to use this module...
+                $oModule = new $sModuleConfigClassName();
+                var_dump($oModule);
                 loadModule($sModulePath);
             }
             // Try to load the default module if the current module failed
-            elseif(file_exists($sModulePath))
+            elseif(file_exists($sDefaultPath))
             {
                 loadModule($sDefaultPath);
             }
-            // And if this also fauls we can print a message with some explenation.
+            // And if this also fails we can print a message with some explenation.
             else 
             {
                 //die('The default module nor the current module could be loaded!');
@@ -252,6 +275,7 @@
 	function loadModule($sModule = null)
 	{
         require_once $sModule;
+        return true;
     }
 	
 ?>

@@ -6,6 +6,7 @@
         const CT_FILE       = 1;
         const CT_MEMCACHED  = 2;
         const CT_ARRAY      = 3;
+        const CT_DATABASE   = 4;
         
         private $_CacheObject = null;
         
@@ -42,6 +43,10 @@
                 case self::CT_ARRAY:
                     require_once EEC_BASE_PATH . 'classes/cache/Array.php';
                     $this->_CacheObject = new EEC_Cache_Array();
+                    break;
+                case self::CT_DATABSE:
+                    require_once EEC_BASE_PATH . 'classes/cache/Database.php';
+                    $this->_CacheObject = new EEC_Cache_Database();
                     break;
                 default:
                     require_once EEC_BASE_PATH . 'classes/cache/Array.php';
