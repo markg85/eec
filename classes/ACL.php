@@ -157,9 +157,10 @@
          * isAllowed('users', array('news'), array('update'));
          * 
          * Checking on multiple resources:
-         * isAllowed('users', array('news', 'comments'), array('update')); <--- multiple resources aren't allowed/possible yet
+         * isAllowed('users', array('news', 'comments'), array('update'));
+         * isAllowed('users', array('news', 'comments'), array('create', 'read', 'update', 'delete'));
          * 
-         * The fast CRUD notation isn't allowed in this function. Perhaps later, the begin is here though.
+         * The fast crud notation isn't allowed in this function. Please supply the crud values as given in the above example
          */
         public function isAllowed($sRole, $sResource, $aCRUD)
         {
@@ -171,7 +172,7 @@
             $idArray = array();
             foreach($iResourcdeId as $aId) {$idArray[] = $aId['id'];};
             
-            $result = $this->_oDatabase->query("SELECT `".$aCRUD."` FROM acl_permissions WHERE role_id = ".$aRoleId['id']." AND resource_id IN (".implode(',', $idArray).") ;");
+            $result = $this->_oDatabase->query("SELECT `".implode("`, `", $aCRUD)."` FROM acl_permissions WHERE role_id = ".$aRoleId['id']." AND resource_id IN (".implode(',', $idArray).") ;");
             $aAllowedResult = $result->fetch_all(MYSQLI_ASSOC);
             
             
@@ -186,9 +187,12 @@
             {
                 foreach($aAllowedResult as $aCrudResult)
                 {
-                    if(!$aCrudResult[$aCRUD])
+                    foreach($aCRUD as $crudName)
                     {
-                        return false;
+                        if(!$aCrudResult[$crudName])
+                        {
+                            return false;
+                        }
                     }
                 }
                 return true;

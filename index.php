@@ -26,6 +26,6 @@
 	//$test->get("acl")->revoke("admin", "files", array("CRUD"));
 	//$test->get("acl")->grant("admin", "categories", array("C"));
 	
-	var_dump($test->get("acl")->isAllowed("admin", array("files", "categories"), "create"));
+	var_dump($test->get("acl")->isAllowed("admin", array("files", "categories"), array("create")));
 	
 ?>
