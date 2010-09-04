@@ -92,7 +92,6 @@
             
             $result = $this->_oDatabase->query("SELECT role_id, resource_id FROM acl_permissions WHERE role_id =".$aRoleId['id']." AND resource_id =".$iResourcdeId['id']." ;");
             $oTestResult = $result->fetch_array(MYSQLI_ASSOC);
-            var_dump($oTestResult);
             
             $aNewCrud = $this->crud($aCRUD, false);
             
@@ -141,14 +140,13 @@
             
             $aNewCrud = $this->crud($aCRUD, true);
             
-            $sQuery = " UPDATE `acl_permissions` SET  
-                        `create` =  ".$aNewCrud['create'].",
-                        `read` =  ".$aNewCrud['read'].",
-                        `update` =  ".$aNewCrud['update'].",
-                        `delete` =  ".$aNewCrud['delete']." WHERE `role_id` = ".$aRoleId['id']." AND `resource_id` =".$iResourcdeId['id'].";";
-
-            var_dump($sQuery);
+            $sUpdateColumnString = '';
+            foreach ($aNewCrud as $sColumn => $iValue)
+            {
+                $sUpdateColumnString .= '`' . $sColumn . '` = ' . $iValue;
+            }
             
+            $sQuery = " UPDATE `acl_permissions` SET ".$sUpdateColumnString." WHERE `role_id` = ".$aRoleId['id']." AND `resource_id` =".$iResourcdeId['id'].";";
             $this->_oDatabase->query($sQuery);
         }
         
@@ -162,17 +160,23 @@
          * 
          * The fast crud notation isn't allowed in this function. Please supply the crud values as given in the above example
          */
-        public function isAllowed($sRole, $sResource, $aCRUD)
+        public function isAllowed($sRole, $aResource, $aCRUD)
         {
             $result = $this->_oDatabase->query("SELECT id FROM acl_roles WHERE role = '".$sRole."';");
             $aRoleId = $result->fetch_array(MYSQLI_ASSOC);
             
-            $result = $this->_oDatabase->query("SELECT id FROM acl_resources WHERE resource IN ('".implode('\',\'', $sResource)."');");
+            $result = $this->_oDatabase->query("SELECT id FROM acl_resources WHERE resource IN ('".implode('\',\'', $aResource)."');");
             $iResourcdeId = $result->fetch_all(MYSQLI_ASSOC);
             $idArray = array();
             foreach($iResourcdeId as $aId) {$idArray[] = $aId['id'];};
             
             $result = $this->_oDatabase->query("SELECT `".implode("`, `", $aCRUD)."` FROM acl_permissions WHERE role_id = ".$aRoleId['id']." AND resource_id IN (".implode(',', $idArray).") ;");
+            
+            if(!$result)
+            {
+                return false;
+            }
+            
             $aAllowedResult = $result->fetch_all(MYSQLI_ASSOC);
             
             if(is_null($aAllowedResult))
@@ -204,6 +208,11 @@
         {
             $aCrudTemplate = array('create' => 0, 'read' => 0, 'update' => 0, 'delete' => 0);
             
+            if($bReverse)
+            {
+                $aCrudTemplate = array();
+            }
+            
             // If reverse is set to true all values (that are provided in $aCrud) will be set to 0 (false). If reverse is set to false it will all be set to 1.
             $iValue = ($bReverse) ? 0 : 1;
             
@@ -219,9 +228,12 @@
             {
                 switch(strtoupper($loopVar[$i]))
                 {
+                    // If you have create permissions you also have read and update permissions
                     case 'C':
                     case 'CREATE':
                         $aCrudTemplate['create'] = $iValue;
+                        $aCrudTemplate['read'] = $iValue;
+                        $aCrudTemplate['update'] = $iValue;
                         break;
                     case 'R':
                     case 'READ':
@@ -230,13 +242,16 @@
                     case 'U':
                     case 'UPDATE':
                         $aCrudTemplate['update'] = $iValue;
+                        $aCrudTemplate['read'] = $iValue;
                         break;
                     case 'D':
                     case 'DELETE':
                         $aCrudTemplate['delete'] = $iValue;
+                        $aCrudTemplate['read'] = $iValue;
                         break;   
                 }
             }
+            
             return $aCrudTemplate;
         }
     }

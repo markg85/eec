@@ -57,12 +57,12 @@
 			return self::$_oCore;
 		}
 		
-		public function handleUrl($defaultModule = 'index')
+		public function handleUrl($sDefaultModule = 'index', $sGroup = 'guest', $aCrud = array('read'))
 		{
             $sModulePath = EEC_MODULE_PATH . $this->get("rest_handling")->getModule() . '/' . $this->get("rest_handling")->getModule() . '.php';
             $sModuleConfigPath = EEC_MODULE_PATH . $this->get("rest_handling")->getModule() . '/config.php';
             $sModuleConfigClassName = $this->get("rest_handling")->getModule() . '_config';
-            $sDefaultPath = EEC_MODULE_PATH . $defaultModule . '/' . $defaultModule . '.php';
+            $sDefaultPath = EEC_MODULE_PATH . $sDefaultModule . '/' . $sDefaultModule . '.php';
             
             /**
              * TEMP NOTE : right now loading the module configuration directly from the file, but that should be put in a database
@@ -76,8 +76,20 @@
              * ACL Created! (though in rough shape). The above can now be created.
              */
             
+            $bHasPermission = false;
+            
+            if($this->get('acl')->isAllowed($sGroup, array($this->get("rest_handling")->getModule()), $aCrud))
+            {
+                $bHasPermission = true;
+            }
+            
+            if(!$bHasPermission)
+            {
+                var_dump('Warning! No permission on the module: ' . $this->get("rest_handling")->getModule());
+            }
+            
             // Load the current module
-            if(file_exists($sModuleConfigPath) && file_exists($sModulePath) && loadModule($sModuleConfigPath))
+            if($bHasPermission && file_exists($sModuleConfigPath) && file_exists($sModulePath) && loadModule($sModuleConfigPath))
             {
                 // Load the configuration to see if we are allowed to use this module...
                 $oModule = new $sModuleConfigClassName();

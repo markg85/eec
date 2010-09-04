@@ -20,11 +20,11 @@
 	$test->get("template_manager")->output("test.tpl", "test");
 	$test->handleUrl();
 	
-	//$test->get("acl")->addRole(new EEC_ACL_Role("admin"));
-	//$test->get("acl")->addResource(new EEC_ACL_Resource("categories"));
+	$test->get("acl")->addRole(new EEC_ACL_Role("guest"));
+	$test->get("acl")->addResource(new EEC_ACL_Resource("fotos"));
 	
-	//$test->get("acl")->revoke("admin", "files", array("CRUD"));
-	//$test->get("acl")->grant("admin", "categories", array("C"));
+	//$test->get("acl")->revoke("guest", "fotos", array("R"));
+	//$test->get("acl")->grant("guest", "fotos", array("R"));
 	
 	var_dump($test->get("acl")->isAllowed("admin", array("files", "categories"), array("create")));
 	
