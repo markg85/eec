@@ -175,16 +175,13 @@
             $result = $this->_oDatabase->query("SELECT `".implode("`, `", $aCRUD)."` FROM acl_permissions WHERE role_id = ".$aRoleId['id']." AND resource_id IN (".implode(',', $idArray).") ;");
             $aAllowedResult = $result->fetch_all(MYSQLI_ASSOC);
             
-            
-            var_dump($aAllowedResult);
-            
-            
             if(is_null($aAllowedResult))
             {
                 return false;
             }
             else
             {
+                // for each resource we're gonna check the acl values with the crud names you provided
                 foreach($aAllowedResult as $aCrudResult)
                 {
                     foreach($aCRUD as $crudName)
