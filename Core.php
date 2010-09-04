@@ -64,18 +64,6 @@
             $sModuleConfigClassName = $this->get("rest_handling")->getModule() . '_config';
             $sDefaultPath = EEC_MODULE_PATH . $sDefaultModule . '/' . $sDefaultModule . '.php';
             
-            /**
-             * TEMP NOTE : right now loading the module configuration directly from the file, but that should be put in a database
-             * or APC or anything.. this is wrong! EEC_Config should probably be used here in which all module states are registered. 
-             * If not existing in the EEC_Config then it should load it from this file -- as a last resort!
-             * 
-             * NOTE 2 : Cannot continue this untill i have users and something to check module permissions agains. And for that i need
-             * ACL's as well... bummer!
-             * 
-             * NOTE 3
-             * ACL Created! (though in rough shape). The above can now be created.
-             */
-            
             $bHasPermission = false;
             
             if($this->get('acl')->isAllowed($sGroup, array($this->get("rest_handling")->getModule()), $aCrud))
