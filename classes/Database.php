@@ -35,57 +35,6 @@
                 die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
             }
         }
-        
-        public function createTable($sTableName, array $aColumns)
-        {
-            $template = "CREATE TABLE `".$sTableName."` (
-                          `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
-                        ) ENGINE = INNODB CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT =  'ACL Table';";
-            
-            $this->query($template);
-        }
-        
-        public function dropTable($sTableName)
-        {
-            $template = "drop table " . $sTableName . ";";
-            $this->query($template);
-        }
-        
-        public function createColumns(array $aColumn)
-        {
-            
-        }
-        
-        public function dropColumns(arras $aColumns)
-        {
-            
-        }
-        
-        public function createIndex($sIndexName, array $aColumns)
-        {
-            
-        }
-        
-        public function dropIndex($sIndexName)
-        {
-            
-        }
-        
-        public function createForeignKey($sFKName, $sColumnFrom, $sColumnTo)
-        {
-            
-        }
-        
-        public function dropForeignKey($sFKName)
-        {
-            
-        }
-        
-        public function getData($sTable, $aColumns)
-        {
-            //return the data...
-        }
-        
     }
     
 ?>

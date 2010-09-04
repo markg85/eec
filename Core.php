@@ -43,9 +43,6 @@
             $this->set('config',                new EEC_Config());
             $this->set('cache',                 new EEC_Cache());
             $this->set('acl',                   new EEC_ACL());
-            
-            //$this->get("database")->createTable("acl3", array());
-            //$this->get("database")->dropTable("acl3");
 		}
 		
 		/**
