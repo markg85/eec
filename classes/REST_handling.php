@@ -134,5 +134,37 @@
 		{
 			return $this->_sSubPath;
 		}
+		
+		/**
+         * getFullUri, this function returns the url part after the module.
+         * Made as a convenient function for installing modules since this would otherwise have to be done in every module.
+         */
+		public function getFullUri()
+		{
+            if(empty($this->_sSubPath))
+            {
+                return $this->getItem();
+            }
+            else
+            {
+                return $this->_sSubPath . '/' . $this->_sGetItem;
+            }
+        }
+        
+        /**
+         * This function is also a convenient function for modules since otherwise they would have to explode getFullUri on "/"
+         * to find the first next part of the uri after the module.
+         */
+        public function getFirstAfterModule()
+        {
+            $sUri = $this->getFullUri();
+            $aUri = explode('/', $sUri);
+            
+            if(!empty($aUri) && is_string($aUri[0]))
+            {
+                return $aUri[0];
+            }
+            return '';
+        }
 	}
 	

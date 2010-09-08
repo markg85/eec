@@ -43,6 +43,12 @@
             $this->set('config',                new EEC_Config());
             $this->set('cache',                 new EEC_Cache());
             $this->set('acl',                   new EEC_ACL());
+            
+            if(defined("ADMIN_AREA"))
+            {
+                require_once EEC_BASE_PATH . 'classes/AdminHelper.php'; // Class that provides easy functions for admins like, getModuleList, installModule, deleteModule...
+                $this->set('adminhelper',       new EEC_AdminHelper());
+            }
 		}
 		
 		/**
@@ -66,22 +72,31 @@
             
             $bHasPermission = false;
             
-            if($this->get('acl')->isAllowed($sGroup, array($this->get("rest_handling")->getModule()), $aCrud))
+            if(defined("ADMIN_AREA") || $this->get('acl')->isAllowed($sGroup, array($this->get("rest_handling")->getModule()), $aCrud))
             {
                 $bHasPermission = true;
             }
-            
-            if(!$bHasPermission)
+            else
             {
                 var_dump('Warning! No permission on the module: ' . $this->get("rest_handling")->getModule());
             }
+            
+            /*
+             * pseudo code
+             * 
+             * 1. check in the database if the requested module is there and grab the module settings
+             * 2. then check if the current user group has access to that module
+             * 3. if it has access then load it otherwise load a default module (like the index page)
+             * 
+             * All current checks below should go away and replaced by the above mentioned pseudo code.
+             */
             
             // Load the current module
             if($bHasPermission && file_exists($sModuleConfigPath) && file_exists($sModulePath) && loadModule($sModuleConfigPath))
             {
                 // Load the configuration to see if we are allowed to use this module...
-                $oModule = new $sModuleConfigClassName();
-                var_dump($oModule);
+                //$oModule = new $sModuleConfigClassName();
+                //var_dump($oModule);
                 loadModule($sModulePath);
             }
             // Try to load the default module if the current module failed

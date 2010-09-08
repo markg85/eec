@@ -1,17 +1,21 @@
 <?php
     $core = Core::getInstance();
     
+    // If the module is loaded through the REST module
     if($core->getLoadedByModule() == 'rest')
     {
         echo '<br />now this is a special rest code path';
     }
     else
     {
-        echo '<br />---- DEFAULT CODE PATH ----';
+        if($core->get("rest_handling")->getFirstAfterModule() == "install")
+        {
+            require_once "install.php";
+        }
+        else
+        {
+            echo '<br />---- DEFAULT CODE PATH ----';
+        }
     }
-    
-    $core->get('config')->add('test', 'some config test value....');
-    
-    var_dump($core->get('config')->get('test'));
     
 ?>
