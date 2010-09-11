@@ -87,6 +87,30 @@
             $sQuery = "DELETE FROM `modules` WHERE `modulerestname` = '".$sModule."';";
             $this->_oDatabase->query($sQuery);
         }
+        
+        public function disableModule($sModule)
+        {
+            $sQuery = "UPDATE `modules` SET `enabled` = '0' WHERE `modulerestname` = '".$sModule."';";
+            $this->_oDatabase->query($sQuery);
+        }
+        
+        public function disableRest($sModule)
+        {
+            $sQuery = "UPDATE `modules` SET `restenabled` = '0' WHERE `modulerestname` = '".$sModule."';";
+            $this->_oDatabase->query($sQuery);
+        }
+        
+        public function enableModule($sModule)
+        {
+            $sQuery = "UPDATE `modules` SET `enabled` = '1' WHERE `modulerestname` = '".$sModule."';";
+            $this->_oDatabase->query($sQuery);
+        }
+        
+        public function enableRest($sModule)
+        {
+            $sQuery = "UPDATE `modules` SET `restenabled` = '1' WHERE `modulerestname` = '".$sModule."';";
+            $this->_oDatabase->query($sQuery);
+        }
     }
     
 ?>
