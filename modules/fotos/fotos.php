@@ -12,6 +12,10 @@
         {
             require_once "install.php";
         }
+        elseif($core->get("rest_handling")->getFirstAfterModule() == "remove")
+        {
+            require_once "remove.php";
+        }
         else
         {
             echo '<br />---- DEFAULT CODE PATH ----';

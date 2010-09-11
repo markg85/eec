@@ -16,6 +16,7 @@
         public function addDataContainer($sDataContainerName)
         {
             $this->_aDataContainers[$sDataContainerName] = new Dwoo_Data();
+            $this->useDataContainer($sDataContainerName);
         }
         
         public function useDataContainer($sDataContainerName)
