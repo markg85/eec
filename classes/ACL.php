@@ -202,6 +202,65 @@
         }
         
         /**
+         * This function generates a overview with all permissions and roles for a certain resource.
+         * The resource should always be provided otherwise you get an array with perhaps wrong values.
+         */
+        public function getOverview($sResource = null)
+        {
+            // Get al the roles
+            $result = $this->_oDatabase->query("SELECT * FROM acl_roles;");
+            $aRoles = $result->fetch_all(MYSQLI_ASSOC);
+            $aOverviewArray = array();
+            
+            if(is_string($sResource))
+            {
+                // Check if the given resource exists in the permission table
+                $sQuery = " SELECT ap.*, aro.role
+                            FROM  `acl_permissions` ap LEFT JOIN `acl_roles` aro ON ap.role_id = aro.id
+                            WHERE  ap.resource_id
+                            IN (
+                            SELECT ar.id
+                            FROM acl_resources ar
+                            WHERE ar.resource =  '".$sResource."')";
+                $result = $this->_oDatabase->query($sQuery);
+                $aPermissions = $result->fetch_all(MYSQLI_ASSOC);
+                
+                if(!empty($aPermissions))
+                {
+                    foreach($aPermissions as $aPermission)
+                    {
+                        $aOverviewArray[$aPermission['role']] = array('role_id'     => (int) $aPermission['role_id'],
+                                                                      'resource_id' => (int) $aPermission['resource_id'],
+                                                                      'create'      => (int) $aPermission['create'],
+                                                                      'read'        => (int) $aPermission['read'],
+                                                                      'update'      => (int) $aPermission['update'],
+                                                                      'delete'      => (int) $aPermission['delete'],
+                                                                      'name'        => $aPermission['role'],
+                                                                      );
+                    }
+                }
+            }
+            
+            foreach($aRoles as $aRole)
+            {
+                if(!isset($aOverviewArray[$aRole['role']]))
+                {
+                    $aOverviewArray[$aRole['role']] = array('role_id'     => (int) $aRole['id'],
+                                                            'resource_id' => 0,
+                                                            'create'      => 0,
+                                                            'read'        => 0,
+                                                            'update'      => 0,
+                                                            'delete'      => 0,
+                                                            'name'        => $aRole['role'],
+                                                            );
+                }
+            }
+            
+            return $aOverviewArray;
+            
+        }
+        
+        /**
          * CRUD helper function to stranslate CRUD into create, read, update and delete.
          */
         private function crud(array $aCrud, $bReverse = false)

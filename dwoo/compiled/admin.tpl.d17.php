@@ -38,6 +38,8 @@ else {
     <?php 
 }?>
 
+
+    <a href="/Admin/<?php echo $this->scope["d"]["modulerestname"];?>/permissions">Manage permissions</a> - 
     
     <a href="/Admin/<?php echo $this->scope["d"]["modulerestname"];?>/remove">uninstall</a>
     
@@ -74,6 +76,40 @@ if ($this->isArray($_fh1_data) === true)
 
 <hr />
 
-<?php  /* end template body */
+<?php if ((isset($this->scope["page"]) ? $this->scope["page"] : null) == "permissions") {
+?>
+<table border="1" bordercolor="#FFCC00" style="background-color:#FFFFCC" width="100%" cellpadding="3" cellspacing="3">
+    <tr style="font-weight: bold;">
+        <td>Role</td>
+        <td>Create</td>
+        <td>Read</td>
+        <td>Update</td>
+        <td>delete</td>
+    </tr>
+    
+<?php 
+$_fh2_data = (isset($this->scope["aPermissions"]) ? $this->scope["aPermissions"] : null);
+if ($this->isArray($_fh2_data) === true)
+{
+	foreach ($_fh2_data as $this->scope['d'])
+	{
+/* -- foreach start output */
+?>
+    <tr>
+        <td><?php echo $this->scope["d"]["name"];?></td>
+        <td><?php echo $this->scope["d"]["create"];?></td>
+        <td><?php echo $this->scope["d"]["read"];?></td>
+        <td><?php echo $this->scope["d"]["update"];?></td>
+        <td><?php echo $this->scope["d"]["delete"];?></td>
+    </tr>
+<?php 
+/* -- foreach end output */
+	}
+}?>
+
+</table>
+<?php 
+}
+ /* end template body */
 return $this->buffer . ob_get_clean();
 ?>
