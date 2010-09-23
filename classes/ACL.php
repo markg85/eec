@@ -106,11 +106,13 @@
                                         VALUES (
                                         '".$aRoleId['id']."',  '".$iResourcdeId['id']."', " . implode(', ', $aNewCrud) . ");";
                                         
-            $sUpdateQuery = " UPDATE `acl_permissions` SET  
-                        `create` =  ".$aNewCrud['create'].",
-                        `read` =  ".$aNewCrud['read'].",
-                        `update` =  ".$aNewCrud['update'].",
-                        `delete` =  ".$aNewCrud['delete']." WHERE `role_id` = ".$aRoleId['id']." AND `resource_id` =".$iResourcdeId['id'].";";
+            $aUpdateColumns = array();
+            foreach($aNewCrud as $sKey => $iValue)
+            {
+                $aUpdateColumns[] = "`".$sKey."` = " . $iValue;
+            }
+            
+            $sUpdateQuery = "UPDATE `acl_permissions` SET ".implode(', ', $aUpdateColumns)." WHERE `role_id` = ".$aRoleId['id']." AND `resource_id` =".$iResourcdeId['id'].";";
             
             // Insert if not exists
             if(is_null($oTestResult))
@@ -140,13 +142,13 @@
             
             $aNewCrud = $this->crud($aCRUD, true);
             
-            $sUpdateColumnString = '';
+            $aUpdateColumnString = array();
             foreach ($aNewCrud as $sColumn => $iValue)
             {
-                $sUpdateColumnString .= '`' . $sColumn . '` = ' . $iValue;
+                $aUpdateColumnString[] = '`' . $sColumn . '` = ' . $iValue;
             }
             
-            $sQuery = " UPDATE `acl_permissions` SET ".$sUpdateColumnString." WHERE `role_id` = ".$aRoleId['id']." AND `resource_id` =".$iResourcdeId['id'].";";
+            $sQuery = "UPDATE `acl_permissions` SET ".implode(', ', $aUpdateColumnString)." WHERE `role_id` = ".$aRoleId['id']." AND `resource_id` =".$iResourcdeId['id'].";";
             $this->_oDatabase->query($sQuery);
         }
         
@@ -265,13 +267,8 @@
          */
         private function crud(array $aCrud, $bReverse = false)
         {
-            $aCrudTemplate = array('create' => 0, 'read' => 0, 'update' => 0, 'delete' => 0);
-            
-            if($bReverse)
-            {
-                $aCrudTemplate = array();
-            }
-            
+            $aCrudTemplate = array();
+
             // If reverse is set to true all values (that are provided in $aCrud) will be set to 0 (false). If reverse is set to false it will all be set to 1.
             $iValue = ($bReverse) ? 0 : 1;
             
@@ -282,6 +279,8 @@
                 $loopVar = $aCrud[0];
                 $iLoopNumber = strlen($aCrud[0]);
             }
+            
+            var_dump($aCrud);
             
             for($i = 0; $i < $iLoopNumber; $i++)
             {

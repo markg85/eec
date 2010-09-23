@@ -18,6 +18,11 @@
         // Only modules that fit the demands below will be added in the module list and then showed in the admin panel.
         public function getModuleList($iType = self::MODULES_ALL)
         {
+            //$result = $this->_oDatabase->query("SELECT modulerestname FROM modules;");
+            //$aData = $result->fetch_array(MYSQLI_ASSOC);
+            //return $aData;
+            
+            
             $this->_aModuleList = array();
             $aFiles = scandir(EEC_MODULE_PATH);
             
