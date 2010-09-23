@@ -93,7 +93,7 @@
             $result = $this->_oDatabase->query("SELECT role_id, resource_id FROM acl_permissions WHERE role_id =".$aRoleId['id']." AND resource_id =".$iResourcdeId['id']." ;");
             $oTestResult = $result->fetch_array(MYSQLI_ASSOC);
             
-            $aNewCrud = $this->crud($aCRUD, false);
+            $aNewCrud = array_merge(array('create' => 0, 'read' => 0, 'update' => 0, 'delete' => 0), $this->crud($aCRUD, false));
             
             $sQuery = "INSERT INTO `acl_permissions` (
                                         `role_id` ,
@@ -105,6 +105,11 @@
                                         )
                                         VALUES (
                                         '".$aRoleId['id']."',  '".$iResourcdeId['id']."', " . implode(', ', $aNewCrud) . ");";
+                                        
+            var_dump($sQuery);
+            var_dump($aNewCrud);
+            
+            
                                         
             $aUpdateColumns = array();
             foreach($aNewCrud as $sKey => $iValue)
@@ -290,8 +295,8 @@
                     case 'C':
                     case 'CREATE':
                         $aCrudTemplate['create'] = $iValue;
-                        $aCrudTemplate['read'] = $iValue;
-                        $aCrudTemplate['update'] = $iValue;
+                        //$aCrudTemplate['read'] = $iValue;
+                        //$aCrudTemplate['update'] = $iValue;
                         break;
                     case 'R':
                     case 'READ':
@@ -300,12 +305,12 @@
                     case 'U':
                     case 'UPDATE':
                         $aCrudTemplate['update'] = $iValue;
-                        $aCrudTemplate['read'] = $iValue;
+                        //$aCrudTemplate['read'] = $iValue;
                         break;
                     case 'D':
                     case 'DELETE':
                         $aCrudTemplate['delete'] = $iValue;
-                        $aCrudTemplate['read'] = $iValue;
+                        //$aCrudTemplate['read'] = $iValue;
                         break;   
                 }
             }
