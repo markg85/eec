@@ -1,4 +1,10 @@
 <?php
+    
+    if(!defined("ADMIN_AREA"))
+    {
+        die("This module can only be used in the admin area!");
+    }
+    
     $core = Core::getInstance();
 
     // Install this module
