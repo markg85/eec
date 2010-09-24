@@ -58,6 +58,13 @@
             return $this->_aModuleList;
         }
         
+        public function getModuleInfo($sModule)
+        {
+            $result = $this->_oDatabase->query("SELECT * FROM modules WHERE modulerestname = '".$sModule."';");
+            $aData = $result->fetch_array(MYSQLI_ASSOC);
+            return $aData;
+        }
+        
         public function installModule($sModule)
         {
             $result = $this->_oDatabase->query("SELECT modulerestname FROM modules WHERE modulerestname = '".$sModule."';");
@@ -83,14 +90,61 @@
                         '".$oModuleObject->getModuleName()."',  '".$oModuleObject->getModuleRestName()."',  '".$oModuleObject->getAuthor()."',  '".$oModuleObject->getEmail()."',  '".$oModuleObject->getVersion()."',  '".$oModuleObject->getEnabled()."',  '".$oModuleObject->getRestEnabled()."');";
             
             $this->_oDatabase->query($sQuery);
-            // Run a query to put all the data from the oConfigObject in the database table: "modules"
-            // also put all the modules menu entries in a table (yet to determine it's structure)
+            
+            // put the menu structure in the database
+            $sQeuryTemplateMenu = "INSERT INTO `admin_menu` (
+                                  `module_id` ,
+                                  `name` ,
+                                  `url` ,
+                                  `desc` ,
+                                  `parent_id`
+                                  )
+                                  VALUES (
+                                  '%s' ,  '%s',  '%s',  '%s',  '%s'
+                                  );";
+            $iModuleId = $this->_oDatabase->insert_id;
+            
+            foreach($oModuleObject->menuEntries() as $sKey => $mValue)
+            {
+                
+                if(is_array($mValue))
+                {
+                    $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sKey, current($mValue), "", 0));
+                    $iLastId = $this->_oDatabase->insert_id;
+                    
+                    foreach($mValue as $sSubKey => $sSubValue)
+                    {
+                        if(is_string($sSubKey))
+                        {
+                            $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sSubKey, $sSubValue, "", $iLastId));
+                        }
+                    }
+                }
+                else
+                {
+                    $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sKey, $mValue, "", 0));
+                    
+                }
+            }
+            
         }
         
         public function deleteModule($sModule)
         {
-            $sQuery = "DELETE FROM `modules` WHERE `modulerestname` = '".$sModule."';";
-            $this->_oDatabase->query($sQuery);
+            $aModuleData = $this->getModuleInfo($sModule);
+            
+            if(is_null($aModuleData))
+            {
+                // no module data available...
+            }
+            else
+            {
+                $sQuery = "DELETE FROM `modules` WHERE `modulerestname` = '".$sModule."';";
+                $this->_oDatabase->query($sQuery);
+                
+                $sQuery = "DELETE FROM `admin_menu` WHERE `module_id` = '".$aModuleData['id']."';";
+                $this->_oDatabase->query($sQuery);
+            }
         }
         
         public function disableModule($sModule)
