@@ -93,7 +93,16 @@
             $result = $this->_oDatabase->query("SELECT role_id, resource_id FROM acl_permissions WHERE role_id =".$aRoleId['id']." AND resource_id =".$iResourcdeId['id']." ;");
             $oTestResult = $result->fetch_array(MYSQLI_ASSOC);
             
-            $aNewCrud = array_merge(array('create' => 0, 'read' => 0, 'update' => 0, 'delete' => 0), $this->crud($aCRUD, false));
+            // Insert if not exists
+            if(is_null($oTestResult))
+            {
+                $aNewCrud = array_merge(array('create' => 0, 'read' => 0, 'update' => 0, 'delete' => 0), $this->crud($aCRUD, false));
+            }
+            //Update
+            else
+            {
+                $aNewCrud = $this->crud($aCRUD, false);
+            }
             
             $sQuery = "INSERT INTO `acl_permissions` (
                                         `role_id` ,
@@ -105,12 +114,7 @@
                                         )
                                         VALUES (
                                         '".$aRoleId['id']."',  '".$iResourcdeId['id']."', " . implode(', ', $aNewCrud) . ");";
-                                        
-            var_dump($sQuery);
-            var_dump($aNewCrud);
             
-            
-                                        
             $aUpdateColumns = array();
             foreach($aNewCrud as $sKey => $iValue)
             {
