@@ -41,7 +41,7 @@ else {
 
     <a href="/Admin/acl/<?php echo $this->scope["d"]["modulerestname"];?>/permissions">Manage permissions</a> - 
     
-    <a href="/Admin/<?php echo $this->scope["d"]["modulerestname"];?>/remove">uninstall</a>
+    <a href="/Admin/modules/<?php echo $this->scope["d"]["modulerestname"];?>/uninstall">uninstall</a>
     
     
     <br />
@@ -65,7 +65,7 @@ if ($this->isArray($_fh1_data) === true)
     
     <?php echo $this->scope["d"]["module"];?> - 
     
-    <a href="/Admin/<?php echo $this->scope["d"]["module"];?>/install">install</a>
+    <a href="/Admin/modules/<?php echo $this->scope["d"]["module"];?>/install">install</a>
     
     <br />
 
