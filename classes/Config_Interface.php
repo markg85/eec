@@ -41,4 +41,16 @@
          * This gets the rest state for the module whether it has special rest capabilities. By default disabled.
          */
         public function getRestEnabled();
+        
+        /**
+         * This gets the menu name for the module. This name will be used in headers or titles.
+         */
+        public function menuName();
+        
+        /**
+         * This gets the menu entries that the module has.
+         */
+        public function menuEntries();
+        
+        
     }

@@ -51,7 +51,22 @@
         {
             return $this->_bRestEnabled;
         }
-
+        // Menu configuration
+        public function menuName()
+        {
+            return "Fotos";
+        }
+        
+        public function menuEntries()
+        {
+            return array("Overview" => "overview",
+                  "Albums" => array("albums", "Overview" => "overview", "Add" => "add", "Edit" => "edit", "Delete" => "delete"),
+                  "Add" => "add",
+                  "Edit" => "edit",
+                  "Delete" => "delete",
+                  );
+        }
+        
     }
 
 ?>

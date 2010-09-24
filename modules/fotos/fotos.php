@@ -32,11 +32,6 @@
         {
             $core->get("adminhelper")->enableRest($core->get("rest_handling")->getModule());
         }
-        elseif($core->get("rest_handling")->getFirstAfterModule() == "permissions")
-        {
-            $core->get("template_manager")->assign("page", $core->get("rest_handling")->getFirstAfterModule());
-            $core->get("template_manager")->assign("aPermissions", $core->get("acl")->getOverview($core->get("rest_handling")->getModule()));
-        }
         else
         {
             echo '<br />---- DEFAULT CODE PATH ----';

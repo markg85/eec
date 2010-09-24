@@ -116,6 +116,18 @@
             $sQuery = "UPDATE `modules` SET `restenabled` = '1' WHERE `modulerestname` = '".$sModule."';";
             $this->_oDatabase->query($sQuery);
         }
+        
+        public function moduleInstalled($sModule)
+        {
+            $result = $this->_oDatabase->query("SELECT modulerestname FROM modules WHERE modulerestname = '".$sModule."';");
+            $aData = $result->fetch_all(MYSQLI_ASSOC);
+            
+            if(!empty($aData))
+            {
+                return true;
+            }
+            return false;
+        }
     }
     
 ?>

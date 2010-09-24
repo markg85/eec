@@ -39,7 +39,7 @@ else {
 }?>
 
 
-    <a href="/Admin/<?php echo $this->scope["d"]["modulerestname"];?>/permissions">Manage permissions</a> - 
+    <a href="/Admin/acl/<?php echo $this->scope["d"]["modulerestname"];?>/permissions">Manage permissions</a> - 
     
     <a href="/Admin/<?php echo $this->scope["d"]["modulerestname"];?>/remove">uninstall</a>
     
