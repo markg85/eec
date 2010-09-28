@@ -11,6 +11,9 @@
 		private $_bPostAction 	= false;
 		private $_bPutAction 	= false;
 		private $_bDeleteAction = false;
+        
+        // Is rest enabled or not
+        private $_bRestEnabled  = true;
 		
 		// The values that will be used throughout this application and are being grabbed with respectively: getItem, getModule and getSubPath
 		private $_sGetItem 		= '';
@@ -62,7 +65,15 @@
                     break;
             }
         }
-		
+        
+        public function setRestUrl($sRestUrl)
+        {
+            $sCleanUrl = preg_replace(array('/(\/){1,}/', '/[^\/a-zA-Z0-9_-]/'), array('/', ''), $sRestUrl);
+            preg_match('#([^/]+)/?(.*?)/?([^/]*)$#', $sCleanUrl, $aMatches);
+            
+            $this->runFilters($aMatches[1], $aMatches[2], $aMatches[3]);
+        }
+        
 		/**
 		* Singlethon function to get the same router object
 		*/
@@ -165,6 +176,28 @@
                 return $aUri[0];
             }
             return '';
+        }
+        
+        public function setRestEnabled($bRestEnabled = true)
+        {
+            $this->_bRestEnabled = $bRestEnabled;
+        }
+        
+        public function getRestEnabled()
+        {
+            return $this->_bRestEnabled;
+        }
+        
+        public function getUrl()
+        {
+            if($this->_bRestEnabled)
+            {
+                return "/" . $this->getModule() . '/' . $this->getSubPath() . '/' . $this->getItem();
+            }
+            else
+            {
+                return "?mModule=" . $this->getModule() . '&mSubPath=' . $this->getSubPath() . '&mItem=' . $this->getItem();
+            }
         }
 	}
 	

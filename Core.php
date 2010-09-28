@@ -173,33 +173,6 @@
 		}
         
         /**
-        * setUrl function will be used to compose SEO friendly url's or argument based url's
-        */
-        public function setUrl($sModule = null, $sSubpath = '', $sItem = '')
-        {
-            if(is_null($sModule))
-            {
-                //die('You must provide a module to the setUrl EEC Core function.');
-                $this->get('rest_handling')->runFilters();
-            }
-            else
-            {
-                $this->get('rest_handling')->runFilters($sModule, $sSubpath, $sItem);
-            }
-        }
-        
-        /**
-        * getUrl function returns the generated data from setUrl
-        */
-        public function getUrl()
-        {
-            $this->_aUrl = array();
-            $this->_aUrl['seo'] = preg_replace(array('/(\/){1,}/'), array('/'), implode('/', array($this->get('rest_handling')->getModule(), $this->get('rest_handling')->getSubPath(), $this->get('rest_handling')->getItem())));
-            $this->_aUrl['arg'] = "mModule=" . $this->get('rest_handling')->getModule() . '&mSubPath=' . $this->get('rest_handling')->getSubPath() . '&mItem=' . $this->get('rest_handling')->getItem();;
-            return $this->_aUrl;
-        }
-        
-        /**
         * validateValue function validates the input and if true returns the input otherwise returns null
         * Also a special fallback param is usable here which can be used for example in forms where wrong data is submitted thus the
         * old data should be used which is what is returned here when the validator check fails and the fallbackValue is
@@ -261,12 +234,12 @@
             // If there is only one "module" in the subPath we detect and use that here.
             if(strpos($sNewModule, '/') === false && strlen($sNewModule) > 2)
             {
-                $this->setUrl($sNewModule, '', $this->get('rest_handling')->getItem());
+                $this->get('rest_handling')->setUrl($sNewModule, '', $this->get('rest_handling')->getItem());
             }
             else
             {
                 $sNewModule = stristr($this->get('rest_handling')->getSubPath(), '/', true);
-                $this->setUrl($sNewModule, stristr('/', $this->get('rest_handling')->getSubPath()), $this->get('rest_handling')->getItem());
+                $this->get('rest_handling')->setUrl($sNewModule, stristr('/', $this->get('rest_handling')->getSubPath()), $this->get('rest_handling')->getItem());
             }
             
             $sNewModulePath = EEC_MODULE_PATH . $sNewModule . '/' . $sNewModule . '.php';
