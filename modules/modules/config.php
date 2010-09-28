@@ -66,6 +66,5 @@
                          "Module Details" => array("module_details", "Settings" => "settings", "Permissions" => "permissions", "Uninstall" => "uninstall"),
                   );
         }
-
     }
 ?>

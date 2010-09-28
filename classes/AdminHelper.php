@@ -127,6 +127,8 @@
                 }
             }
             
+            Core::getInstance()->get("acl")->addResource(new EEC_ACL_Resource($oModuleObject->getModuleRestName()));
+            
         }
         
         public function deleteModule($sModule)
@@ -145,6 +147,8 @@
                 $sQuery = "DELETE FROM `admin_menu` WHERE `module_id` = '".$aModuleData['id']."';";
                 $this->_oDatabase->query($sQuery);
             }
+            
+            Core::getInstance()->get("acl")->dropResource($sModule);
         }
         
         public function disableModule($sModule)
