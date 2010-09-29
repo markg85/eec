@@ -192,7 +192,8 @@
         {
             if($this->_bRestEnabled)
             {
-                return "/" . $this->getModule() . '/' . $this->getSubPath() . '/' . $this->getItem();
+                $aData = array_filter(array($this->getModule(), $this->getSubPath(), $this->getItem()));
+                return "/" . implode('/', $aData);
             }
             else
             {

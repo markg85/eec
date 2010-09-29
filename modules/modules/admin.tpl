@@ -1,34 +1,43 @@
 {if $subPath == "" && ( $item == "overview" || $item == "")}
 <h1>Welcome on the <i>{$aModuleInfo.modulename}</i> overview page.</h1>
-The following modules are installed: <br />
+The following modules are installed: <p />
+<table border="1" bordercolor="#FFCC00" style="background-color:#FFFFCC" width="100%" cellpadding="3" cellspacing="3">
+    <tr style="font-weight: bold;">
+        <td>Module</td>
+        <td>State</td>
+        <td>REST</td>
+        <td>Permissions</td>
+        <td>Uninstall</td>
+    </tr>
 {foreach $aInstalledModules d}
     
-    {$d.modulename} - 
-    
-    {if $d.enabled}
-        <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/enable"}">Disable</a> - 
-    {else}
-        <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/enable"}">Enable REST</a> - 
-    {/if}
-
-    {if $d.restenabled}
-        <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/disablerest"}">Disable REST</a> - 
-    {else}
-        <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/enablerest"}">Enable REST</a> - 
-    {/if}
-
-    <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/permissions"}">Manage permissions</a> - 
-    
-    <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/uninstall"}">uninstall</a>
-    
-    
-    
-    
-    <br />
+    <tr>
+        <td><a href="{eec_rest_url "/Admin/$d.modulerestname/"}">{$d.modulename}</a></td>
+        <td>
+            {if $d.enabled}
+                <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/enable"}">Disable</a>
+            {else}
+                <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/enable"}">Enable</a>
+            {/if}
+        </td>
+        <td>
+            {if $d.restenabled}
+                <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/disablerest"}">Disable</a>
+            {else}
+                <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/enablerest"}">Enable</a>
+            {/if}
+        </td>
+        <td><a href="{eec_rest_url "/Admin/modules/$d.modulerestname/permissions"}">Manage permissions</a></td>
+        <td><a href="{eec_rest_url "/Admin/modules/$d.modulerestname/uninstall"}">uninstall</a></td>
+    </tr>
 
 {/foreach}
-<hr />
+</table>
 
+<p />
+{if empty($aInstallableModules)}
+There are no other modules to install.
+{else}
 The following modules can be installed: <br />
 {foreach $aInstallableModules d}
     
@@ -37,4 +46,5 @@ The following modules can be installed: <br />
     <br />
 
 {/foreach}
+
 {/if}

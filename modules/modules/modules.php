@@ -37,7 +37,7 @@
     }
     
     // The pages this module has
-    elseif($core->get("rest_handling")->getItem() == "overview")
+    elseif($core->get("rest_handling")->getSubPath() == "" && ($core->get("rest_handling")->getItem() == "overview" || $core->get("rest_handling")->getItem() == ""))
     {
         $core->get("template_manager")->assign("aInstalledModules", $core->get("adminhelper")->getInstalledModules());
         $core->get("template_manager")->assign("aInstallableModules", $core->get("adminhelper")->getInstallableModules());
