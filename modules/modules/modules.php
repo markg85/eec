@@ -6,7 +6,7 @@
     }
     
     $core = Core::getInstance();
-
+    
     // Install this module
     if($core->get("rest_handling")->getItem() == "install")
     {
@@ -39,13 +39,8 @@
     // The pages this module has
     elseif($core->get("rest_handling")->getItem() == "overview")
     {
-        /**
-         * Some text like: welcome to the Modules module. The following modules are installed:
-         * -- list of installed modules--
-         * And the following modules can be installed:
-         * -- list of installable modules --
-         * TODO : TO BE IMPLEMENTED
-         */
+        $core->get("template_manager")->assign("aInstalledModules", $core->get("adminhelper")->getInstalledModules());
+        $core->get("template_manager")->assign("aInstallableModules", $core->get("adminhelper")->getInstallableModules());
     }
     elseif($core->get("rest_handling")->getItem() == "installed_modules")
     {
@@ -74,7 +69,8 @@
         $core->get("adminhelper")->deleteModule($core->get("rest_handling")->getFirstAfterModule());
     }
     // Install any module -- make sure we this one last since it's a heavy function when there are a lot of modules
-    elseif(in_array($core->get("rest_handling")->getFirstAfterModule(), array_keys($core->get("adminhelper")->getModuleList())) && $core->get("rest_handling")->getItem() == "install")
+    //elseif(in_array($core->get("rest_handling")->getFirstAfterModule(), array_keys($core->get("adminhelper")->getAllModulesFromModuleDir())) && $core->get("rest_handling")->getItem() == "install")
+    elseif($core->get("adminhelper")->moduleInstalled($core->get("rest_handling")->getFirstAfterModule()) && $core->get("rest_handling")->getItem() == "install")
     {
         $core->get("adminhelper")->installModule($core->get("rest_handling")->getFirstAfterModule());
     }

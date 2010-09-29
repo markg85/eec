@@ -2,10 +2,6 @@
     
     class EEC_AdminHelper
     {
-        const MODULES_ACTIVE        = 0;
-        const MODULES_INACTIVE      = 1;
-        const MODULES_ALL           = 2;
-        
         private $_oDatabase;
         private $_aModuleList;
         
@@ -15,14 +11,11 @@
             $this->_oDatabase = EEC_Database::getInstance();
         }
         
-        // Only modules that fit the demands below will be added in the module list and then showed in the admin panel.
-        public function getModuleList($iType = self::MODULES_ALL)
+        /**
+         * Returns all modules from the modules dir.
+         */
+        public function getAllModulesFromModuleDir()
         {
-            //$result = $this->_oDatabase->query("SELECT modulerestname FROM modules;");
-            //$aData = $result->fetch_array(MYSQLI_ASSOC);
-            //return $aData;
-            
-            
             $this->_aModuleList = array();
             $aFiles = scandir(EEC_MODULE_PATH);
             
@@ -30,7 +23,22 @@
             {
                 if(is_dir(EEC_MODULE_PATH . $file) && $file != ".." && $file != ".")
                 {
-                    $sConfigPath = EEC_MODULE_PATH . $file . "/config.php";
+                    $sConfigPath    = EEC_MODULE_PATH . $file . "/config.php";
+                    $sAdminTplPath  = EEC_MODULE_PATH . $file . "/admin.tpl";
+                    $sMainTplPath   = EEC_MODULE_PATH . $file . "/main.tpl";
+                    $bTrue = true;
+                    
+                    if(!file_exists($sAdminTplPath))
+                    {
+                        var_dump("MODULE :: " . $file . " - NO_ADMIN_TEMPLATE_FILE");
+                        $bTrue = false;
+                    }
+                    
+                    if(!file_exists($sMainTplPath))
+                    {
+                        var_dump("MODULE :: " . $file . " - NO_MAIN_TEMPLATE_FILE");
+                        $bTrue = false;
+                    }
                     
                     if(file_exists($sConfigPath))
                     {
@@ -38,7 +46,7 @@
                         $sConfigObjectName = $file . "_config";
                         $oConfigObject = new $sConfigObjectName();
                         
-                        if($oConfigObject instanceof EEC_Config_Interface)
+                        if($oConfigObject instanceof EEC_Config_Interface && $bTrue)
                         {
                             $this->_aModuleList[$file]['module'] = $file;
                             $this->_aModuleList[$file]['configpath'] = $sConfigPath;
@@ -58,6 +66,51 @@
             return $this->_aModuleList;
         }
         
+        /**
+         * Returns all modules that are in the modules dir, but not installed.
+         */
+        public function getInstallableModules()
+        {
+            $result = $this->_oDatabase->query("SELECT modulerestname FROM modules;");
+            $aData = $result->fetch_all(MYSQLI_ASSOC);
+            
+            // hmm.. not exactly the kind of array i can use.. Make it usable.
+            $aInstalledModules = array();
+            if(!empty($aData))
+            {
+                foreach($aData as $data)
+                {
+                    $aInstalledModules[] = current($data);
+                }
+            }
+            
+            // I only need simple data.. The other data is interesting but not needed here.
+            $aModulesFromDir = $this->getAllModulesFromModuleDir();
+            $aSimpleModulesFromDir = array_keys($aModulesFromDir);
+            
+            $aInstallableModules = array();
+            
+            foreach($aSimpleModulesFromDir as $sModule)
+            {
+                if(!in_array($sModule, $aInstalledModules))
+                {
+                    $aInstallableModules[$sModule] = $aModulesFromDir[$sModule];
+                }
+            }
+            
+            return $aInstallableModules;
+        }
+        
+        /**
+         * Returns all installed modules
+         */
+        public function getInstalledModules()
+        {
+            $result = $this->_oDatabase->query("SELECT * FROM modules;");
+            $aData = $result->fetch_all(MYSQLI_ASSOC);
+            return $aData;
+        }
+        
         public function getModuleInfo($sModule)
         {
             $result = $this->_oDatabase->query("SELECT * FROM modules WHERE modulerestname = '".$sModule."';");
@@ -67,6 +120,11 @@
         
         public function installModule($sModule)
         {
+            if(is_null($this->_aModuleList))
+            {
+                $this->getAllModulesFromModuleDir();
+            }
+            
             $result = $this->_oDatabase->query("SELECT modulerestname FROM modules WHERE modulerestname = '".$sModule."';");
             $aData = $result->fetch_all(MYSQLI_ASSOC);
             
@@ -106,7 +164,6 @@
             
             foreach($oModuleObject->menuEntries() as $sKey => $mValue)
             {
-                
                 if(is_array($mValue))
                 {
                     $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sKey, current($mValue), "", 0));
@@ -127,8 +184,8 @@
                 }
             }
             
+            // Add a default resource with the modulerestname.
             Core::getInstance()->get("acl")->addResource(new EEC_ACL_Resource($oModuleObject->getModuleRestName()));
-            
         }
         
         public function deleteModule($sModule)

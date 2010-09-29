@@ -51,6 +51,4 @@
          * This gets the menu entries that the module has.
          */
         public function menuEntries();
-        
-        
     }

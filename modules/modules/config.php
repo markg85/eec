@@ -24,7 +24,7 @@
         
         public function getModuleName()
         {
-            return "modules";
+            return "Modules";
         }
         
         public function getModuleRestName()
