@@ -27,7 +27,7 @@ The following modules are installed: <p />
                 <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/enablerest"}">Enable</a>
             {/if}
         </td>
-        <td><a href="{eec_rest_url "/Admin/modules/$d.modulerestname/permissions"}">Manage permissions</a></td>
+        <td><a href="{eec_rest_url "/Admin/acl/$d.modulerestname/permissions"}">Manage permissions</a></td>
         <td><a href="{eec_rest_url "/Admin/modules/$d.modulerestname/uninstall"}">uninstall</a></td>
     </tr>
 
