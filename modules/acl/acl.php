@@ -11,6 +11,7 @@
     {
         // We try to access the ACL part that can set permissions on a module
         $core->get("template_manager")->assign("aPermissions", $core->get("acl")->getOverview($core->get("rest_handling")->getFirstAfterModule()));
+        $core->get("template_manager")->assign("moduleName", $core->get("rest_handling")->getFirstAfterModule());
     }
     else
     {
@@ -26,6 +27,8 @@
              $aSubPath[2] == CRUD premission to change
              $core->get("rest_handling")->getItem() == either allow or deny for the given crud permission
             */
+            
+            var_dump($aSubPath);
             
             if($core->get("rest_handling")->getItem() == "allow")
             {
