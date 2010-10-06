@@ -289,8 +289,6 @@
                 $iLoopNumber = strlen($aCrud[0]);
             }
             
-            var_dump($aCrud);
-            
             for($i = 0; $i < $iLoopNumber; $i++)
             {
                 switch(strtoupper($loopVar[$i]))

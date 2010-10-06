@@ -31,6 +31,13 @@
 		
 		private $_sLoadedByModule = null;
         
+        private $_aLog = array();
+        private $_aAdminFoorterHooks = array();
+        
+        const Warning   = 0;
+        const Error     = 1;
+        const Notice    = 2;
+        
 		/**
 		* Constructor that adds some default EEC components.
 		*/
@@ -49,6 +56,9 @@
                 require_once EEC_BASE_PATH . 'classes/AdminHelper.php'; // Class that provides easy functions for admins like, getModuleList, installModule, deleteModule...
                 $this->set('adminhelper',       new EEC_AdminHelper());
             }
+            
+            // Set a default timezone
+            date_default_timezone_set('Europe/Amsterdam');
 		}
 		
 		/**
@@ -250,6 +260,54 @@
                 loadModule($sNewModulePath);
             }
         }
+        
+        /**
+         * log adds a log enty to the log array. Logs are to be provided in printf format.
+         */
+        public function log($sModule, $iWarningType, $sMessage)
+        {
+            $aArgs = func_get_args();
+            unset($aArgs[0]);
+            unset($aArgs[1]);
+            unset($aArgs[3]);
+
+            $oDateTime = new DateTime("now");
+
+            $aLogLine['module']     = $sModule;
+            $aLogLine['type']       = $iWarningType;
+            $aLogLine['message']    = vsprintf($sMessage, $aArgs);
+            $aLogLine['timestamp']  = $oDateTime->getTimestamp();
+            $this->_aLog[] = $aLogLine;
+        }
+        
+        /**
+         * getLog returns all log lines to be used.. anywhere.
+         */
+        public function getLog()
+        {
+            return $this->_aLog;
+        }
+        
+        /**
+         * !!! this function should not be here, still deciding where to put this !!!
+         * set a hook path which will be used in the admin panel
+         */
+        public function setAdminFooterHook($sHookTemplateIncludePath)
+        {
+            if(file_exists($sHookTemplateIncludePath))
+            {
+                $this->_aAdminFoorterHooks[] = $sHookTemplateIncludePath;
+            }
+        }
+        
+        /**
+         * !!! this function should not be here, still deciding where to put this !!!
+         * return all hook paths.
+         */
+        public function getAdminFooterHooks()
+        {
+            return $this->_aAdminFoorterHooks;
+        }
 	}
 	
 	/**
@@ -262,5 +320,4 @@
         require_once $sModule;
         return true;
     }
-	
 ?>

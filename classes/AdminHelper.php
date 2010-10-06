@@ -30,13 +30,13 @@
                     
                     if(!file_exists($sAdminTplPath))
                     {
-                        var_dump("MODULE :: " . $file . " - NO_ADMIN_TEMPLATE_FILE");
+                        Core::getInstance()->log($file, Core::Warning, 'NO_ADMIN_TEMPLATE_FILE');
                         $bTrue = false;
                     }
                     
                     if(!file_exists($sMainTplPath))
                     {
-                        var_dump("MODULE :: " . $file . " - NO_MAIN_TEMPLATE_FILE");
+                        Core::getInstance()->log($file, Core::Warning, 'NO_MAIN_TEMPLATE_FILE');
                         $bTrue = false;
                     }
                     
@@ -54,12 +54,12 @@
                         }
                         else
                         {
-                            var_dump("MODULE :: " . $file . " - NOT_IMPLEMENTING_INTERFACE");
+                            Core::getInstance()->log($file, Core::Warning, 'NOT_IMPLEMENTING_INTERFACE');
                         }
                     }
                     else
                     {
-                        var_dump("MODULE :: " . $file . " - NO_CONFIG_OBJECT");
+                        Core::getInstance()->log($file, Core::Warning, 'NO_CONFIG_OBJECT');
                     }
                 }
             }
@@ -145,7 +145,7 @@
                         `restenabled`
                         )
                         VALUES (
-                        '".$oModuleObject->getModuleName()."',  '".$oModuleObject->getModuleRestName()."',  '".$oModuleObject->getAuthor()."',  '".$oModuleObject->getEmail()."',  '".$oModuleObject->getVersion()."',  '".$oModuleObject->getEnabled()."',  '".$oModuleObject->getRestEnabled()."');";
+                        '".$oModuleObject->getModuleRestName()."',  '".$oModuleObject->getModuleName()."',  '".$oModuleObject->getAuthor()."',  '".$oModuleObject->getEmail()."',  '".$oModuleObject->getVersion()."',  '".$oModuleObject->getEnabled()."',  '".$oModuleObject->getRestEnabled()."');";
             
             $this->_oDatabase->query($sQuery);
             
@@ -162,30 +162,39 @@
                                   );";
             $iModuleId = $this->_oDatabase->insert_id;
             
-            foreach($oModuleObject->menuEntries() as $sKey => $mValue)
+            if(is_array($oModuleObject->menuEntries()))
             {
-                if(is_array($mValue))
+                foreach($oModuleObject->menuEntries() as $sKey => $mValue)
                 {
-                    $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sKey, current($mValue), "", 0));
-                    $iLastId = $this->_oDatabase->insert_id;
-                    
-                    foreach($mValue as $sSubKey => $sSubValue)
+                    if(is_array($mValue))
                     {
-                        if(is_string($sSubKey))
+                        $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sKey, current($mValue), "", 0));
+                        $iLastId = $this->_oDatabase->insert_id;
+                        
+                        foreach($mValue as $sSubKey => $sSubValue)
                         {
-                            $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sSubKey, $sSubValue, "", $iLastId));
+                            if(is_string($sSubKey))
+                            {
+                                $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sSubKey, $sSubValue, "", $iLastId));
+                            }
                         }
                     }
-                }
-                else
-                {
-                    $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sKey, $mValue, "", 0));
-                    
+                    else
+                    {
+                        $this->_oDatabase->query(sprintf($sQeuryTemplateMenu, $iModuleId, $sKey, $mValue, "", 0));
+                        
+                    }
                 }
             }
             
             // Add a default resource with the modulerestname.
             Core::getInstance()->get("acl")->addResource(new EEC_ACL_Resource($oModuleObject->getModuleRestName()));
+            
+            // Give the admin all permissions on this module
+            Core::getInstance()->get("acl")->grant('admin', $oModuleObject->getModuleRestName(), array('crud'));
+            
+            // Log line
+            Core::getInstance()->log($sModule, Core::Notice, 'Inserted module data into the database.');
         }
         
         public function deleteModule($sModule)
@@ -206,6 +215,8 @@
             }
             
             Core::getInstance()->get("acl")->dropResource($sModule);
+            
+            Core::getInstance()->log($sModule, Core::Notice, 'Module data deleted from database.');
         }
         
         public function disableModule($sModule)
