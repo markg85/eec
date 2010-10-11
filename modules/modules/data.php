@@ -213,10 +213,10 @@
             }
             
             // Add a default resource with the modulerestname.
-            Core::getInstance()->get("acl")->addResource(new EEC_ACL_Resource($oModuleObject->getModuleRestName()));
+            Core::getInstance()->getModuleData("acl")->addResource(new EEC_ACL_Resource($oModuleObject->getModuleRestName()));
             
             // Give the admin all permissions on this module
-            Core::getInstance()->get("acl")->grant('admin', $oModuleObject->getModuleRestName(), array('crud'));
+            Core::getInstance()->getModuleData("acl")->grant('admin', $oModuleObject->getModuleRestName(), array('crud'));
             
             // Log line
             $this->_oLog->log($sModule, 3, 'Inserted module data into the database.');
@@ -239,7 +239,7 @@
                 $this->_oDatabase->query($sQuery);
             }
             
-            Core::getInstance()->get("acl")->dropResource($sModule);
+            Core::getInstance()->getModuleData("acl")->dropResource($sModule);
             
             $this->_oLog->log($sModule, 3, 'Module data deleted from database.');
         }

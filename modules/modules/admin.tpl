@@ -15,7 +15,7 @@ The following modules are installed: <p />
         <td><a href="{eec_rest_url "/Admin/$d.modulerestname/"}">{$d.modulename}</a></td>
         <td>
             {if $d.enabled}
-                <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/enable"}">Disable</a>
+                <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/disable"}">Disable</a>
             {else}
                 <a href="{eec_rest_url "/Admin/modules/$d.modulerestname/enable"}">Enable</a>
             {/if}

@@ -20,12 +20,12 @@
 	$test->get("template_manager")->output("test.tpl", "test");
 	$test->handleUrl();
 	
-	$test->get("acl")->addRole(new EEC_ACL_Role("guest"));
-	$test->get("acl")->addResource(new EEC_ACL_Resource("fotos"));
+	$test->getModuleData("acl")->addRole(new EEC_ACL_Role("guest"));
+	$test->getModuleData("acl")->addResource(new EEC_ACL_Resource("fotos"));
 	
 	//$test->get("acl")->revoke("guest", "fotos", array("R"));
 	//$test->get("acl")->grant("guest", "fotos", array("R"));
 	
-	var_dump($test->get("acl")->isAllowed("admin", array("files", "categories"), array("create")));
+	var_dump($test->getModuleData("acl")->isAllowed("admin", array("files", "categories"), array("create")));
 	
 ?>

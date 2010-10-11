@@ -10,7 +10,7 @@
     if($core->getModuleData("modules")->moduleInstalled($core->get("rest_handling")->getFirstAfterModule()) && $core->get("rest_handling")->getItem() == "permissions")
     {
         // We try to access the ACL part that can set permissions on a module
-        $core->get("template_manager")->assign("aPermissions", $core->get("acl")->getOverview($core->get("rest_handling")->getFirstAfterModule()));
+        $core->get("template_manager")->assign("aPermissions", $core->getModuleData("acl")->getOverview($core->get("rest_handling")->getFirstAfterModule()));
         $core->get("template_manager")->assign("moduleName", $core->get("rest_handling")->getFirstAfterModule());
     }
     else
@@ -32,11 +32,11 @@
             
             if($core->get("rest_handling")->getItem() == "allow")
             {
-                $core->get("acl")->grant($aSubPath[1], $aSubPath[0], array($aSubPath[2]));
+                $core->getModuleData("acl")->grant($aSubPath[1], $aSubPath[0], array($aSubPath[2]));
             }
             else
             {
-                $core->get("acl")->revoke($aSubPath[1], $aSubPath[0], array($aSubPath[2]));
+                $core->getModuleData("acl")->revoke($aSubPath[1], $aSubPath[0], array($aSubPath[2]));
             }
         }
         

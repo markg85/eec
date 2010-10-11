@@ -16,7 +16,7 @@
 	require_once EEC_BASE_PATH . 'classes/TemplateManager_Dwoo.php'; // Include dwoo as the template manager.
 	require_once EEC_BASE_PATH . 'classes/cache.php'; // Caching class that can use: APC, file and memcache(d)
 	require_once EEC_BASE_PATH . 'classes/config.php'; // Config class to store configuration values
-	require_once EEC_BASE_PATH . 'classes/ACL.php'; // Config class to store configuration values
+	//require_once EEC_BASE_PATH . 'classes/ACL.php'; // Config class to store configuration values
     
 	class Core
 	{
@@ -45,7 +45,7 @@
             $this->set('template_manager',      new TemplateManager_Dwoo());
             $this->set('config',                new EEC_Config());
             $this->set('cache',                 new EEC_Cache());
-            $this->set('acl',                   new EEC_ACL());
+            //$this->set('acl',                   new EEC_ACL());
             
             // Set a default timezone
             date_default_timezone_set('Europe/Amsterdam');
@@ -72,7 +72,7 @@
             
             $bHasPermission = false;
             
-            if(defined("ADMIN_AREA") || $this->get('acl')->isAllowed($sGroup, array($this->get("rest_handling")->getModule()), $aCrud))
+            if(defined("ADMIN_AREA") || $this->getModuleData('acl')->isAllowed($sGroup, array($this->get("rest_handling")->getModule()), $aCrud))
             {
                 $bHasPermission = true;
             }
@@ -122,7 +122,7 @@
 			}
 			else
             {
-                die("The provided component: " . $sCoreComponentName . " isn't registered!");
+                //die("The provided component: " . $sCoreComponentName . " isn't registered!");
             }
 			return false;
 		}

@@ -1,21 +1,10 @@
 <?php
     
-    include EEC_BASE_PATH . 'classes/ACL/Role.php';
-    include EEC_BASE_PATH . 'classes/ACL/Resource.php';
+    require_once EEC_BASE_PATH . "classes/Data_Interface.php";
+    require_once EEC_BASE_PATH . 'modules/acl/ACL/Role.php';
+    require_once EEC_BASE_PATH . 'modules/acl/ACL/Resource.php';
     
-    /**
-     * EEC_ACL class managed the ACL possibilities in EEC.
-     * The ACL permissions work on the CRUD permissions (Create, Read, Update and Delete) All places in this EEC_ACL class
-     * that require CRUD permissions can be written in length in an array like so:
-     * array('create', 'read', 'update', 'delete');
-     * 
-     * Or in a simple manner like so:
-     * array('CRUD'); which adds all the permissions as well.
-     * 
-     * All the ACL roles are stored and fetched to and from the database. EEC_ACL uses the EEC_Cache machanism to 
-     * hide away the database queries.
-     */
-    class EEC_ACL
+    class acl_data implements EEC_Data_Interface
     {
         private $_oDatabase;
         
@@ -319,4 +308,6 @@
             
             return $aCrudTemplate;
         }
+
     }
+?> 
