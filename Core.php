@@ -278,6 +278,14 @@
          */
         public function setModuleData($sModule)
         {
+            /*
+             * TODO: there should be more checks here.. pseudo code:
+             * - Is the module currently loaded?
+             * - Do we have permission in the module?
+             * - ... then all that's below.
+             * If those are added then ACL is used since right now it's... not.
+             */
+            
             if(isset($this->_aModuleDataContainer[$sModule]))
             {
                 die('You tried to register the module: ' . $sModule . ', but it\'s already registered!');
