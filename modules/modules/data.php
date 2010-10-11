@@ -5,12 +5,14 @@
     class modules_data implements EEC_Data_Interface
     {
         private $_oDatabase;
+        private $_oLog;
         private $_aModuleList;
         
         public function __construct()
         {
             //$this->_eecObject = Core::getInstance();
             $this->_oDatabase = EEC_Database::getInstance();
+            $this->_oLog = Core::getInstance()->getModuleData('consolelog');
         }
         
         /**
@@ -33,13 +35,13 @@
                     
                     if(!file_exists($sAdminTplPath))
                     {
-                        Core::getInstance()->log($file, Core::Warning, 'NO_ADMIN_TEMPLATE_FILE');
+                        $this->_oLog->log($file, 1, 'NO_ADMIN_TEMPLATE_FILE');
                         $bTrue = false;
                     }
                     
                     if(!file_exists($sMainTplPath))
                     {
-                        Core::getInstance()->log($file, Core::Warning, 'NO_MAIN_TEMPLATE_FILE');
+                        $this->_oLog->log($file, 1, 'NO_MAIN_TEMPLATE_FILE');
                         $bTrue = false;
                     }
                     
@@ -57,12 +59,12 @@
                         }
                         else
                         {
-                            Core::getInstance()->log($file, Core::Warning, 'NOT_IMPLEMENTING_CONFIG_INTERFACE');
+                            $this->_oLog->log($file, 1, 'NOT_IMPLEMENTING_CONFIG_INTERFACE');
                         }
                     }
                     else
                     {
-                        Core::getInstance()->log($file, Core::Warning, 'NO_CONFIG_OBJECT');
+                        $this->_oLog->log($file, 1, 'NO_CONFIG_OBJECT');
                     }
                     
                     if(file_exists($sDataPath))
@@ -77,12 +79,12 @@
                         }
                         else
                         {
-                            Core::getInstance()->log($file, Core::Warning, 'NOT_IMPLEMENTING_DATA_INTERFACE');
+                            $this->_oLog->log($file, 1, 'NOT_IMPLEMENTING_DATA_INTERFACE');
                         }
                     }
                     else
                     {
-                        Core::getInstance()->log($file, Core::Warning, 'NO_DATA_OBJECT');
+                        $this->_oLog->log($file, 1, 'NO_DATA_OBJECT');
                     }
                 }
             }
@@ -217,7 +219,7 @@
             Core::getInstance()->get("acl")->grant('admin', $oModuleObject->getModuleRestName(), array('crud'));
             
             // Log line
-            Core::getInstance()->log($sModule, Core::Notice, 'Inserted module data into the database.');
+            $this->_oLog->log($sModule, 3, 'Inserted module data into the database.');
         }
         
         public function deleteModule($sModule)
@@ -239,7 +241,7 @@
             
             Core::getInstance()->get("acl")->dropResource($sModule);
             
-            Core::getInstance()->log($sModule, Core::Notice, 'Module data deleted from database.');
+            $this->_oLog->log($sModule, 3, 'Module data deleted from database.');
         }
         
         public function disableModule($sModule)

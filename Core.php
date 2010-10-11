@@ -32,12 +32,7 @@
 		
 		private $_sLoadedByModule = null;
         
-        private $_aLog = array();
         private $_aAdminFoorterHooks = array();
-        
-        const Warning   = 0;
-        const Error     = 1;
-        const Notice    = 2;
         
 		/**
 		* Constructor that adds some default EEC components.
@@ -254,33 +249,6 @@
             {
                 loadModule($sNewModulePath);
             }
-        }
-        
-        /**
-         * log adds a log enty to the log array. Logs are to be provided in printf format.
-         */
-        public function log($sModule, $iWarningType, $sMessage)
-        {
-            $aArgs = func_get_args();
-            unset($aArgs[0]);
-            unset($aArgs[1]);
-            unset($aArgs[3]);
-
-            $oDateTime = new DateTime("now");
-
-            $aLogLine['module']     = $sModule;
-            $aLogLine['type']       = $iWarningType;
-            $aLogLine['message']    = vsprintf($sMessage, $aArgs);
-            $aLogLine['timestamp']  = $oDateTime->getTimestamp();
-            $this->_aLog[] = $aLogLine;
-        }
-        
-        /**
-         * getLog returns all log lines to be used.. anywhere.
-         */
-        public function getLog()
-        {
-            return $this->_aLog;
         }
         
         /**
