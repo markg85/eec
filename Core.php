@@ -28,6 +28,7 @@
 		
 		// The object storage -- not using SplObjectStorage since it doesn't seem to be right for what i want.
 		private $_aDataContainer = array();
+		private $_aModuleDataContainer = array();
 		
 		private $_sLoadedByModule = null;
         
@@ -50,12 +51,6 @@
             $this->set('config',                new EEC_Config());
             $this->set('cache',                 new EEC_Cache());
             $this->set('acl',                   new EEC_ACL());
-            
-            if(defined("ADMIN_AREA"))
-            {
-                require_once EEC_BASE_PATH . 'classes/AdminHelper.php'; // Class that provides easy functions for admins like, getModuleList, installModule, deleteModule...
-                $this->set('adminhelper',       new EEC_AdminHelper());
-            }
             
             // Set a default timezone
             date_default_timezone_set('Europe/Amsterdam');
@@ -307,6 +302,60 @@
         public function getAdminFooterHooks()
         {
             return $this->_aAdminFoorterHooks;
+        }
+        
+        /**
+         * setModuleData opens the file containing the module data class and puts it in a array which is then callable by getModuleData.
+         * This is a generic way to register all module data classes in such a way that any module can access data from any other module.
+         */
+        public function setModuleData($sModule)
+        {
+            if(isset($this->_aModuleDataContainer[$sModule]))
+            {
+                die('You tried to register the module: ' . $sModule . ', but it\'s already registered!');
+            }
+            
+            // Check if the module exists in the module folder
+            if(!is_dir(EEC_MODULE_PATH . $sModule))
+            {
+                die('The module: ' . $sModule . ' doesn\'t seem to be existing in the modules folder!');
+            }
+            elseif(file_exists(EEC_MODULE_PATH . $sModule . '/' . $sModule . '.php'))
+            {
+                // oke, the module data file seems to be here.. Check and see if it contains a data class.
+                require_once EEC_MODULE_PATH . $sModule . '/data.php';
+                $sDataObjectName = $sModule . "_data";
+                $oData = new $sDataObjectName();
+                
+                if($oData instanceof EEC_Data_Interface)
+                {
+                    var_dump($sModule . ' is now loaded as module data! (Core.php)');
+                    $this->_aModuleDataContainer[$sModule] = $oData;
+                }
+            }
+        }
+        
+        /**
+         * getModuleData allows any module to access data from any other module as long as there are registered using "setModuleData".
+         */
+        public function getModuleData($sModule)
+        {
+            if(isset($this->_aModuleDataContainer[$sModule]))
+            {
+                return $this->_aModuleDataContainer[$sModule];
+            }
+            else
+            {
+                // So it's not registered? Try to load it anyway (lazy loading)
+                $this->setModuleData($sModule);
+                
+                // If it now fails then it really just fails!
+                if(isset($this->_aModuleDataContainer[$sModule]))
+                {
+                    return $this->_aModuleDataContainer[$sModule];
+                }
+                die('You tried to get the module: ' . $sModule . ', but it\'s not registered!');
+            }
         }
 	}
 	

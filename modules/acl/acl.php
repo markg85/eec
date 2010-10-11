@@ -7,7 +7,7 @@
     
     $core = Core::getInstance();
 
-    if($core->get("adminhelper")->moduleInstalled($core->get("rest_handling")->getFirstAfterModule()) && $core->get("rest_handling")->getItem() == "permissions")
+    if($core->getModuleData("modules")->moduleInstalled($core->get("rest_handling")->getFirstAfterModule()) && $core->get("rest_handling")->getItem() == "permissions")
     {
         // We try to access the ACL part that can set permissions on a module
         $core->get("template_manager")->assign("aPermissions", $core->get("acl")->getOverview($core->get("rest_handling")->getFirstAfterModule()));

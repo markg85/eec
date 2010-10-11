@@ -1,6 +1,8 @@
 <?php
     
-    class EEC_AdminHelper
+    require_once EEC_BASE_PATH . "classes/Data_Interface.php";
+    
+    class modules_data implements EEC_Data_Interface
     {
         private $_oDatabase;
         private $_aModuleList;
@@ -24,6 +26,7 @@
                 if(is_dir(EEC_MODULE_PATH . $file) && $file != ".." && $file != ".")
                 {
                     $sConfigPath    = EEC_MODULE_PATH . $file . "/config.php";
+                    $sDataPath      = EEC_MODULE_PATH . $file . "/data.php";
                     $sAdminTplPath  = EEC_MODULE_PATH . $file . "/admin.tpl";
                     $sMainTplPath   = EEC_MODULE_PATH . $file . "/main.tpl";
                     $bTrue = true;
@@ -54,12 +57,32 @@
                         }
                         else
                         {
-                            Core::getInstance()->log($file, Core::Warning, 'NOT_IMPLEMENTING_INTERFACE');
+                            Core::getInstance()->log($file, Core::Warning, 'NOT_IMPLEMENTING_CONFIG_INTERFACE');
                         }
                     }
                     else
                     {
                         Core::getInstance()->log($file, Core::Warning, 'NO_CONFIG_OBJECT');
+                    }
+                    
+                    if(file_exists($sDataPath))
+                    {
+                        require_once $sDataPath;
+                        $sDataObjectName = $file . "_data";
+                        $oDataObject = new $sDataObjectName();
+                        
+                        if($oDataObject instanceof EEC_Data_Interface)
+                        {
+                            // We don't need to do anything with it! All we need to know is if it exists and implements what we require.
+                        }
+                        else
+                        {
+                            Core::getInstance()->log($file, Core::Warning, 'NOT_IMPLEMENTING_DATA_INTERFACE');
+                        }
+                    }
+                    else
+                    {
+                        Core::getInstance()->log($file, Core::Warning, 'NO_DATA_OBJECT');
                     }
                 }
             }
@@ -255,5 +278,4 @@
             return false;
         }
     }
-    
-?>
+?> 

@@ -10,37 +10,37 @@
     // Install this module
     if($core->get("rest_handling")->getItem() == "install")
     {
-        $core->get("adminhelper")->installModule($core->get("rest_handling")->getFirstAfterModule());
+        $core->getModuleData("modules")->installModule($core->get("rest_handling")->getFirstAfterModule());
     }
     // Uninstall this module
     elseif($core->get("rest_handling")->getItem() == "uninstall")
     {
-        $core->get("adminhelper")->deleteModule($core->get("rest_handling")->getFirstAfterModule());
+        $core->getModuleData("modules")->deleteModule($core->get("rest_handling")->getFirstAfterModule());
     }
     
     // Other adjustable module settings
     elseif($core->get("rest_handling")->getItem() == "disable")
     {
-        $core->get("adminhelper")->disableModule($core->get("rest_handling")->getFirstAfterModule());
+        $core->getModuleData("modules")->disableModule($core->get("rest_handling")->getFirstAfterModule());
     }
     elseif($core->get("rest_handling")->getItem() == "enable")
     {
-        $core->get("adminhelper")->enableModule($core->get("rest_handling")->getFirstAfterModule());
+        $core->getModuleData("modules")->enableModule($core->get("rest_handling")->getFirstAfterModule());
     }
     elseif($core->get("rest_handling")->getItem() == "disablerest")
     {
-        $core->get("adminhelper")->disableRest($core->get("rest_handling")->getFirstAfterModule());
+        $core->getModuleData("modules")->disableRest($core->get("rest_handling")->getFirstAfterModule());
     }
     elseif($core->get("rest_handling")->getItem() == "enablerest")
     {
-        $core->get("adminhelper")->enableRest($core->get("rest_handling")->getFirstAfterModule());
+        $core->getModuleData("modules")->enableRest($core->get("rest_handling")->getFirstAfterModule());
     }
     
     // The pages this module has
     elseif($core->get("rest_handling")->getSubPath() == "" && ($core->get("rest_handling")->getItem() == "overview" || $core->get("rest_handling")->getItem() == ""))
     {
-        $core->get("template_manager")->assign("aInstalledModules", $core->get("adminhelper")->getInstalledModules());
-        $core->get("template_manager")->assign("aInstallableModules", $core->get("adminhelper")->getInstallableModules());
+        $core->get("template_manager")->assign("aInstalledModules", $core->getModuleData("modules")->getInstalledModules());
+        $core->get("template_manager")->assign("aInstallableModules", $core->getModuleData("modules")->getInstallableModules());
     }
     elseif($core->get("rest_handling")->getItem() == "installed_modules")
     {
@@ -64,14 +64,13 @@
     
     
     // Uninstall any module
-    elseif($core->get("adminhelper")->moduleInstalled($core->get("rest_handling")->getFirstAfterModule()) && $core->get("rest_handling")->getItem() == "uninstall")
+    elseif($core->getModuleData("modules")->moduleInstalled($core->get("rest_handling")->getFirstAfterModule()) && $core->get("rest_handling")->getItem() == "uninstall")
     {
-        $core->get("adminhelper")->deleteModule($core->get("rest_handling")->getFirstAfterModule());
+        $core->getModuleData("modules")->deleteModule($core->get("rest_handling")->getFirstAfterModule());
     }
     // Install any module -- make sure we this one last since it's a heavy function when there are a lot of modules
-    //elseif(in_array($core->get("rest_handling")->getFirstAfterModule(), array_keys($core->get("adminhelper")->getAllModulesFromModuleDir())) && $core->get("rest_handling")->getItem() == "install")
-    elseif($core->get("adminhelper")->moduleInstalled($core->get("rest_handling")->getFirstAfterModule()) && $core->get("rest_handling")->getItem() == "install")
+    elseif($core->getModuleData("modules")->moduleInstalled($core->get("rest_handling")->getFirstAfterModule()) && $core->get("rest_handling")->getItem() == "install")
     {
-        $core->get("adminhelper")->installModule($core->get("rest_handling")->getFirstAfterModule());
+        $core->getModuleData("modules")->installModule($core->get("rest_handling")->getFirstAfterModule());
     }
 ?>
