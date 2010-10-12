@@ -24,12 +24,12 @@
         
         public function getModuleName()
         {
-            return "Templates";
+            return "Template";
         }
         
         public function getModuleRestName()
         {
-            return "templates";
+            return "template";
         }
         
         public function setEnabled($bEnabled = true)

@@ -279,5 +279,17 @@
             }
             return false;
         }
+        
+        public function getAdminMenu($sModule)
+        {
+            $result = $this->_oDatabase->query("SELECT * FROM admin_menu WHERE module_id IN (SELECT id FROM modules WHERE modulerestname = 'template');");
+            $aData = $result->fetch_all(MYSQLI_ASSOC);
+            
+            if(!empty($aData))
+            {
+                return $aData;
+            }
+            return false;
+        }
     }
 ?> 
