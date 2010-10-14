@@ -62,6 +62,10 @@
         {
             return null;
         }
-
+        
+        public function createTableStatement()
+        {
+            return null;
+        }
     }
 ?>

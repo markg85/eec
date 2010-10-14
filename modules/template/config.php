@@ -67,5 +67,9 @@
                   );
         }
 
+        public function createTableStatement()
+        {
+            return null;
+        }
     }
 ?>

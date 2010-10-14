@@ -97,7 +97,16 @@
         public function getInstallableModules()
         {
             $result = $this->_oDatabase->query("SELECT modulerestname FROM modules;");
-            $aData = $result->fetch_all(MYSQLI_ASSOC);
+            
+            // If we have no results we return "null"
+            if($result === false)
+            {
+                $aData = null;
+            }
+            else
+            {
+                $aData = $result->fetch_all(MYSQLI_ASSOC);
+            }
             
             // hmm.. not exactly the kind of array i can use.. Make it usable.
             $aInstalledModules = array();
@@ -132,15 +141,23 @@
         public function getInstalledModules()
         {
             $result = $this->_oDatabase->query("SELECT * FROM modules;");
-            $aData = $result->fetch_all(MYSQLI_ASSOC);
-            return $aData;
+            
+            if($result !== false)
+            {
+                $aData = $result->fetch_all(MYSQLI_ASSOC);
+                return $aData;
+            }            
         }
         
         public function getModuleInfo($sModule)
         {
             $result = $this->_oDatabase->query("SELECT * FROM modules WHERE modulerestname = '".$sModule."';");
-            $aData = $result->fetch_array(MYSQLI_ASSOC);
-            return $aData;
+            
+            if($result !== false)
+            {
+                $aData = $result->fetch_array(MYSQLI_ASSOC);
+                return $aData;
+            }
         }
         
         public function installModule($sModule)
@@ -151,7 +168,11 @@
             }
             
             $result = $this->_oDatabase->query("SELECT modulerestname FROM modules WHERE modulerestname = '".$sModule."';");
-            $aData = $result->fetch_all(MYSQLI_ASSOC);
+            
+            if($result !== false)
+            {
+                $aData = $result->fetch_all(MYSQLI_ASSOC);
+            }
             
             if(!empty($aData))
             {
@@ -159,6 +180,13 @@
             }
             
             $oModuleObject = $this->_aModuleList[$sModule]['configobject'];
+
+            // Add the database table to the database. We need to do this first since it might be a highly valuable database create statement that is required to install other modules.
+            
+            if(is_string($oModuleObject->createTableStatement()))
+            {
+                $this->_oDatabase->query($oModuleObject->createTableStatement());
+            }
             
             $sQuery = " INSERT INTO `modules` (
                         `modulerestname` ,

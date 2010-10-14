@@ -67,5 +67,60 @@
                   );
         }
 
+        public function createTableStatement()
+        {
+            return "-- --------------------------------------------------------
+
+                    --
+                    -- Table structure for table `acl`
+                    --
+
+                    CREATE TABLE IF NOT EXISTS `acl` (
+                    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                    PRIMARY KEY (`id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='ACL Table' AUTO_INCREMENT=1 ;
+
+                    -- --------------------------------------------------------
+
+                    --
+                    -- Table structure for table `acl_permissions`
+                    --
+
+                    CREATE TABLE IF NOT EXISTS `acl_permissions` (
+                    `role_id` int(10) unsigned NOT NULL,
+                    `resource_id` int(10) unsigned NOT NULL,
+                    `create` tinyint(1) NOT NULL DEFAULT '0',
+                    `read` tinyint(1) NOT NULL DEFAULT '0',
+                    `update` tinyint(1) NOT NULL DEFAULT '0',
+                    `delete` tinyint(1) NOT NULL DEFAULT '0',
+                    PRIMARY KEY (`role_id`,`resource_id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='All permissions are in this table with foreign keys to resou';
+
+                    -- --------------------------------------------------------
+
+                    --
+                    -- Table structure for table `acl_resources`
+                    --
+
+                    CREATE TABLE IF NOT EXISTS `acl_resources` (
+                    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                    `resource` varchar(100) NOT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `resource` (`resource`)
+                    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='ACL Resources (the things where you can set permissions on)' AUTO_INCREMENT=1 ;
+
+                    -- --------------------------------------------------------
+
+                    --
+                    -- Table structure for table `acl_roles`
+                    --
+
+                    CREATE TABLE IF NOT EXISTS `acl_roles` (
+                    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                    `role` varchar(50) NOT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `role` (`role`)
+                    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='ACL Roles (thus user groups)' AUTO_INCREMENT=1 ;";
+        }
     }
 ?>

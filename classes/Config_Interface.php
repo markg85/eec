@@ -51,4 +51,9 @@
          * This gets the menu entries that the module has.
          */
         public function menuEntries();
+        
+        /**
+         * This function holds the database create statement. Provide "null" for no database create statement.
+         */
+        public function createTableStatement();
     }

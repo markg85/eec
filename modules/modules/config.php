@@ -66,5 +66,27 @@
                          "Module Details" => array("module_details", "Settings" => "settings", "Permissions" => "permissions", "Uninstall" => "uninstall"),
                   );
         }
+        
+        public function createTableStatement()
+        {
+            return "-- --------------------------------------------------------
+
+                    --
+                    -- Table structure for table `modules`
+                    --
+
+                    CREATE TABLE IF NOT EXISTS `modules` (
+                    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                    `modulerestname` varchar(25) NOT NULL,
+                    `modulename` varchar(50) NOT NULL,
+                    `author` varchar(50) NOT NULL,
+                    `email` varchar(50) NOT NULL,
+                    `version` double unsigned NOT NULL,
+                    `enabled` tinyint(1) unsigned NOT NULL,
+                    `restenabled` tinyint(1) unsigned NOT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `modulerestname` (`modulerestname`)
+                    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+        }
     }
 ?>

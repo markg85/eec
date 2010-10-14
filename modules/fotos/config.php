@@ -66,7 +66,11 @@
                   "Delete" => "delete",
                   );
         }
-        
+
+        public function createTableStatement()
+        {
+            return null;
+        }
     }
 
 ?>
