@@ -69,7 +69,24 @@
 
         public function createTableStatement()
         {
-            return null;
+            return "-- --------------------------------------------------------
+
+                    --
+                    -- Table structure for table `template`
+                    --
+
+                    CREATE TABLE IF NOT EXISTS `template` (
+                    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                    `template_name` varchar(50) NOT NULL,
+                    `template_var_1` varchar(50) NOT NULL,
+                    `template_var_2` varchar(50) NOT NULL,
+                    `template_var_3` varchar(50) NOT NULL,
+                    `template_var_4` varchar(50) NOT NULL,
+                    `template_var_5` varchar(50) NOT NULL,
+                    `template_location` varchar(50) NOT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `template_name` (`template_name`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table that contains template location and variable names.' AUTO_INCREMENT=1 ;";
         }
     }
 ?>
