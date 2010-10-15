@@ -169,6 +169,7 @@
             
             $result = $this->_oDatabase->query("SELECT modulerestname FROM modules WHERE modulerestname = '".$sModule."';");
             
+            $aData = null;
             if($result !== false)
             {
                 $aData = $result->fetch_all(MYSQLI_ASSOC);

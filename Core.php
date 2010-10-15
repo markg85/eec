@@ -45,7 +45,6 @@
             $this->set('template_manager',      new TemplateManager_Dwoo());
             $this->set('config',                new EEC_Config());
             $this->set('cache',                 new EEC_Cache());
-            //$this->set('acl',                   new EEC_ACL());
             
             // Set a default timezone
             date_default_timezone_set('Europe/Amsterdam');

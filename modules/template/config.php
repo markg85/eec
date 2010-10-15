@@ -83,7 +83,6 @@
                     `template_var_3` varchar(50) NOT NULL,
                     `template_var_4` varchar(50) NOT NULL,
                     `template_var_5` varchar(50) NOT NULL,
-                    `template_location` varchar(50) NOT NULL,
                     PRIMARY KEY (`id`),
                     UNIQUE KEY `template_name` (`template_name`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table that contains template location and variable names.' AUTO_INCREMENT=1 ;";
