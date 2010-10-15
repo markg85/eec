@@ -10,6 +10,9 @@
         public function __construct()
         {
             $this->_oDatabase = EEC_Database::getInstance();
+            
+            // Set a default path for template storage
+            $this->setTemplateStorageFolder(EEC_BASE_PATH . 'modules/template/stored_template_files/');
         }
         
         public function setTemplateStorageFolder($sTemplateStorage)

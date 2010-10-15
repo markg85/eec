@@ -3,10 +3,6 @@
     // overview
     $core = Core::getInstance();
     
-    // Set a template storage folder
-    $core->getModuleData('template')->setTemplateStorageFolder(EEC_BASE_PATH . 'modules/template/stored_template_files/');
-    
-    
     if($core->get("rest_handling")->getSubPath() == "" && ($core->get("rest_handling")->getItem() == "overview" || $core->get("rest_handling")->getItem() == ""))
     {
         $core->get("template_manager")->assign("aMenuItems", $core->getModuleData("modules")->getAdminMenu("template"));
